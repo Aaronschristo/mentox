@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+
+{% block title %}Scanner Check-in{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="max-width: 800px; margin: 0 auto; text-align: center;">
+    <h2><i class='bx bx-qr-scan text-gradient'></i> Kiosk Scanner</h2>
+    <p style="color: var(--text-light); margin-bottom: 30px;">Scan custom QR code to deduct entry fee automatically.</p>
+
+    <div id="reader-container" style="background: black; border-radius: 16px; overflow: hidden; margin-bottom: 30px; box-shadow: var(--box-shadow); position: relative; width: 100%; max-width: 500px; margin: 0 auto 30px auto; min-height: 350px;">
+        <div id="reader"></div>
+        <div id="loader" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.7); z-index: 10; display: none;">
+            <div style="color: white; font-weight: 600;">Processing...</div>
+        </div>
+    </div>
+
+    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 15px; display: inline-block; margin-bottom: 20px;">
+        <p style="margin: 0; font-weight: 600; color: var(--success);">Check-in Fee: ₹100.00</p>
+    </div>
+
+</div>
+
+<!-- html5-qrcode library -->
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader",
+            { fps: 10, qrbox: {width: 250, height: 250} },
+            /* verbose= */ false);
+
+        let isProcessing = false;
+
+        function onScanSuccess(decodedText, decodedResult) {
+            if (isProcessing) return;
+            isProcessing = true;
+            
+            // Pause scanner visually
+            document.getElementById('loader').style.display = 'flex';
+            
+            // Initiate Checkin API Call
+            fetch('/api/checkin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ customer_id: decodedText })
+            })
+            .then(res => res.json().then(data => ({status: res.status, body: data})))
+            .then(res => {
+                if(res.status === 200) {
+                    showToast(`Success! Checked in ${res.body.customer_name}. Balance: ₹${res.body.remaining_balance.toFixed(2)}`, 'success');
+                } else {
+                    showToast(res.body.error || 'Check-in failed', 'error');
+                }
+            })
+            .catch(err => {
+                showToast('Network error during checkin', 'error');
+            })
+            .finally(() => {
+                setTimeout(() => {
+                    isProcessing = false;
+                    document.getElementById('loader').style.display = 'none';
+                }, 2000); // 2 seconds cooldown before next scan
+            });
+        }
+
+        html5QrcodeScanner.render(onScanSuccess, (err) => {
+            // Unused
+        });
+    });
+</script>
+<style>
+    /* Styling the html5-qrcode element to look modern inside our dark container */
+    #reader { border: none !important; }
+    #reader__scan_region { background: black; }
+    #reader__dashboard_section_csr span { color: white !important; font-family: 'Poppins', sans-serif !important; }
+    #reader button { background: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-family: 'Poppins', sans-serif;}
+</style>
+{% endblock %}
