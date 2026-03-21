@@ -71,6 +71,9 @@ function toggleTheme() {
 
 // Load theme icon on load
 document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+        document.body.classList.remove("preload");
+    }, 50);
     const savedTheme = localStorage.getItem('theme');
     const icon = document.getElementById('theme-toggle-icon');
     if(savedTheme === 'dark' && icon) {
@@ -123,6 +126,13 @@ document.addEventListener('DOMContentLoaded', () => {
             sidebar.classList.toggle("active");
             if (window.innerWidth <= 768) {
                 overlay.classList.toggle("active", sidebar.classList.contains("active"));
+            } else {
+                // Save desktop state persistently
+                if (sidebar.classList.contains("active")) {
+                    localStorage.setItem('desktop_sidebar_state', 'closed');
+                } else {
+                    localStorage.setItem('desktop_sidebar_state', 'open');
+                }
             }
         });
     }

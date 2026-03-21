@@ -9,16 +9,16 @@
     <!-- Boxicons -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=1.3">
     <!-- Prevent FOUC: Apply dark mode immediately during parse -->
     <script>
         if (localStorage.getItem('theme') === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
         }
     </script>
-    <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}?v=1.3" defer></script>
 </head>
-<body>
+<body class="preload">
     <div class="app-container">
         <!-- Sidebar -->
         <nav class="sidebar">
@@ -53,6 +53,13 @@
                 </li>
             </ul>
         </nav>
+        
+        <!-- Prevent Sidebar FOUC -->
+        <script>
+            if (window.innerWidth > 768 && localStorage.getItem('desktop_sidebar_state') === 'closed') {
+                document.querySelector('.sidebar').classList.add('active');
+            }
+        </script>
 
         <!-- Main Content -->
         <section class="main-content">
