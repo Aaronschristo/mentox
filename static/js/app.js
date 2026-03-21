@@ -73,6 +73,16 @@ window.allCustomers = [];
 // API Interactions & Page Loaders
 document.addEventListener('DOMContentLoaded', () => {
     
+    // Sidebar Toggle
+    const sidebar = document.querySelector(".sidebar");
+    const sidebarBtn = document.querySelector(".sidebarBtn");
+    
+    if(sidebarBtn) {
+        sidebarBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("active");
+        });
+    }
+
     // Dashboard Stats
     if(document.getElementById('total-customers')) {
         loadDashboardStats();
