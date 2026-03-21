@@ -91,6 +91,18 @@ def manage_customers():
         db.session.commit()
         return jsonify({'message': 'Customer created successfully', 'id': new_customer.id}), 201
 
+@app.route('/api/customers/<customer_id>', methods=['DELETE'])
+def delete_customer(customer_id):
+    customer = Customer.query.get(customer_id)
+    if not customer:
+        return jsonify({'error': 'Customer not found'}), 404
+        
+    Transaction.query.filter_by(customer_id=customer.id).delete()
+    db.session.delete(customer)
+    db.session.commit()
+    
+    return jsonify({'message': 'Customer deleted successfully'}), 200
+
 @app.route('/api/customers/search', methods=['GET'])
 def search_customers():
     q = request.args.get('q', '').strip()
@@ -171,5 +183,7 @@ def generate_qr(customer_id):
     return send_file(img_io, mimetype='image/png')
 
 if __name__ == '__main__':
-    from waitress import serve
-    serve(app, host='0.0.0.0', port=5000)
+    # from waitress import serve
+    # serve(app, host='0.0.0.0', port=5000)
+
+    app.run(debug=True)

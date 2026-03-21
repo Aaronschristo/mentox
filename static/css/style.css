@@ -292,6 +292,26 @@ h2 {
   box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
+/* Danger Soft Button */
+.btn-danger-soft {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  border-radius: 10px;
+}
+.btn-danger-soft:hover {
+  background: rgba(239, 68, 68, 0.2);
+  transform: translateY(-2px);
+}
+[data-theme="dark"] .btn-danger-soft {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+[data-theme="dark"] .btn-danger-soft:hover {
+  background: rgba(239, 68, 68, 0.25);
+  transform: translateY(-2px);
+}
+
 /* Tables */
 .table-container {
   overflow-x: auto;

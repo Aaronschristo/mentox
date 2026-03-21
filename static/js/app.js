@@ -293,9 +293,14 @@ function loadCustomers() {
                             <td data-label="Balance" style="font-weight:600; color:var(--text-dark)">${formatCurrency(c.balance)}</td>
                             <td data-label="Registered" class="text-light">${c.created_at}</td>
                             <td data-label="Action">
-                                <button class="btn btn-amount" style="padding: 6px 12px; font-size: 13px;" onclick="showQR('${c.id}', '${c.name}')">
-                                    <i class='bx bx-qr'></i> View
-                                </button>
+                                <div style="display:flex; gap: 8px; justify-content: flex-end;">
+                                    <button class="btn btn-amount" style="padding: 6px 12px; font-size: 13px;" onclick="showQR('${escapeHTML(c.id)}', '${escapeHTML(c.name)}')">
+                                        <i class='bx bx-qr'></i> View
+                                    </button>
+                                    <button class="btn btn-danger-soft" style="padding: 6px 12px; font-size: 13px;" onclick="deleteCustomer('${escapeHTML(c.id)}', '${escapeHTML(c.name)}')">
+                                        <i class='bx bx-trash'></i> Delete
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     `;
@@ -385,4 +390,24 @@ function handleAssignExistingQR(e) {
             showToast(res.body.error, 'error');
         }
     });
+}
+
+function deleteCustomer(id, name) {
+    if(confirm(`Are you sure you want to permanently delete customer "${name}"?\nThis action cannot be undone and will permanently wipe their transaction history.`)) {
+        fetch(`/api/customers/${id}`, {
+            method: 'DELETE'
+        })
+        .then(res => res.json().then(data => ({status: res.status, body: data})))
+        .then(res => {
+            if(res.status === 200) {
+                showToast(`Customer "${name}" deleted successfully.`, 'success');
+                loadCustomers();
+            } else {
+                showToast(res.body.error, 'error');
+            }
+        })
+        .catch(err => {
+            showToast('System Error', 'error');
+        });
+    }
 }

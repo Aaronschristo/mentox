@@ -6,7 +6,9 @@
 <div class="flex-header">
     <h2 style="margin: 0;">Manage Customers</h2>
     <div class="header-buttons">
-        <button class="btn" style="background: var(--white); color: var(--primary-color); border: 1px solid var(--primary-color);" onclick="startAssignQRFlow()">
+        <button class="btn"
+            style="background: var(--white); color: var(--primary-color); border: 1px solid var(--primary-color);"
+            onclick="startAssignQRFlow()">
             <i class='bx bx-qr-scan'></i> Assign Existing QR
         </button>
         <button class="btn btn-primary" onclick="toggleModal('issueQrModal')">
@@ -23,7 +25,6 @@
                     <th>Name</th>
                     <th>Balance</th>
                     <th>Registered On</th>
-                    <th>QR Code</th>
                 </tr>
             </thead>
             <tbody id="customers-table-body">
@@ -181,9 +182,9 @@
             overlaySuccess.classList.add("hidden");
         }
 
-        window.initAssignScannerDependencies = function() {
+        window.initAssignScannerDependencies = function () {
             if (isScannerInitialized) return;
-            
+
             assignHtml5QrCode = new Html5Qrcode("assign-reader");
 
             // Fetch cameras
@@ -202,7 +203,7 @@
             }).catch(err => {
                 cameraSelect.innerHTML = "<option value=''>Camera access denied</option>";
             });
-            
+
             isScannerInitialized = true;
         };
 
@@ -286,7 +287,7 @@
         toggleModal('assignQrModal');
         document.getElementById('assign-qr-form').reset();
         document.getElementById('assign-qr-id').value = '';
-        
+
         // Initialize camera libraries on demand
         if (window.initAssignScannerDependencies) {
             window.initAssignScannerDependencies();
