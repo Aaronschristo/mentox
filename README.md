@@ -9,11 +9,14 @@ A premium, fully responsive web application designed for PlayArea businesses to 
 - 📸 **Advanced Hardware Scanner Pipeline**: Features a custom camera feed engine built dynamically over `html5-qrcode`. Implements explicit permission request delays, device enumeration (camera selection dropdowns), smart unified toggle controls, and gorgeous status overlays (Success rings, Loaders) styled uniformly across all pages. 
 - 💳 **Wallet Top-up System**: Select customers via name autocomplete, or scan their QR code to instantly pull up their profile and recharge their balance with quick pre-filled amounts (₹100, ₹500, ₹1000).
 - 🌙 **Flawless Dark Mode Persistence**: Engineered to entirely bypass the structural "Flash of Unstyled Content" (FOUC) bug by parsing and executing local viewport settings actively within the document `<head>` DOM allocation. 
+- ⚡ **O(log N) Performance & Rendering Pipelines**: Upgraded internal database querying via native SQLite performance indexes mitigating bottleneck scans. Re-engineered dynamic DOM manipulation to strictly bypass `innerHTML` reflows, instead buffering array matrices actively inside detached `DocumentFragment` instances. Exclusively offloaded all DOM transition repaints to hardware-accelerated GPU layers.
+- 🗑️ **Cascading Deletions**: Provides a persistent, native backend endpoint and UI hook targeting SQLite relations. Automatically unlinks and clears orphaned transactional logs before explicitly purging users.
+- 🔒 **OWASP Network Patches**: Deployed comprehensive global input sanitization (`escapeHTML()`) securely wrapping all user profile mappings. Effectively mitigates arbitrary DOM-based XSS payload scripts traversing the network into client browser environments.
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Python 3.8+, Flask, Flask-SQLAlchemy (SQLite3)
-- **Frontend**: HTML5, Vanilla CSS3 (CSS Variables, Flex/Grid matrices), Vanilla JavaScript
+- **Backend**: Python 3.8+, Flask, Flask-SQLAlchemy (SQLite3), Waitress (Production WSGI Gateway)
+- **Frontend**: HTML5, Vanilla CSS3 (CSS Variables, Flex/Grid matrices, GPU Transforms), Vanilla JavaScript (Fragment Buffers)
 - **Libraries**:
   - `qrcode[pil]` (Server-side automatic bitmap QR generation)
   - `html5-qrcode` (Browser-Side Camera feed stream and matrix decoding)
@@ -58,6 +61,8 @@ A premium, fully responsive web application designed for PlayArea businesses to 
    ```bash
    python app.py
    ```
+   *Note: For deployment, uncomment the active `waitress` block bridging the WSGI interface inside `app.py`*
+
 3. Open your web browser and navigate to:
    ```
    http://localhost:5000
