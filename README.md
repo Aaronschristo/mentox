@@ -1,25 +1,24 @@
 # PlayArea Management App
 
-A modern, responsive web application designed for PlayArea businesses to manage digital customer check-ins, top-ups, and point-of-sale functionality using QR code scanning capabilities. Built with Flask, SQLite, and vanilla Javascript.
+A premium, fully responsive web application designed for PlayArea businesses to manage digital customer check-ins, top-ups, and point-of-sale functionality using QR code scanning capabilities. Built with Flask, SQLite, and vanilla Javascript.
 
-## Features
+## ✨ Premium Features
 
-- 👤 **Customer Management**: Register new customers with initial balances. 
-- 🖨️ **QR Code Issuance**: Generate unique QR codes for new customers, or scan and assign *existing physical QR cards* to new customer accounts on the fly.
-- 📸 **Camera Check-ins**: Dedicated scanner kiosk interface powered by `html5-qrcode` to automatically decode customer cards via webcam, deducting the ₹100 flat entry fee.
-- 💳 **Wallet Top-up System**: Select customers via name autocomplete, or scan their QR code to directly pull up their profile and recharge their balance with quick pre-filled amounts (₹100, ₹500, ₹1000).
-- 📊 **Real-time Dashboard**: Displays total registered customers, total generated check-in revenue, and an audit table of recent transactions.
-- 🌙 **Dark Mode**: Comes with a sleek Dark Mode toggle that saves your aesthetic preferences to your browser natively.
+- 📱 **Fully Responsive Typography & Layout**: Entire application scales elegantly across desktops, tablets, and mobile phones. Complex data tables magically format themselves into stacked, isolated component cards on small viewports. Navigation menus switch gracefully to off-canvas overlays with dedicated exit mappings.
+- 🎨 **State-of-the-Art Aesthetic**: Built using extensive Glassmorphism, dynamic DOM transitions, and mathematical CSS variables. Customer arrays dynamically generate styled programmatic avatars natively.
+- 📸 **Advanced Hardware Scanner Pipeline**: Features a custom camera feed engine built dynamically over `html5-qrcode`. Implements explicit permission request delays, device enumeration (camera selection dropdowns), smart unified toggle controls, and gorgeous status overlays (Success rings, Loaders) styled uniformly across all pages. 
+- 💳 **Wallet Top-up System**: Select customers via name autocomplete, or scan their QR code to instantly pull up their profile and recharge their balance with quick pre-filled amounts (₹100, ₹500, ₹1000).
+- 🌙 **Flawless Dark Mode Persistence**: Engineered to entirely bypass the structural "Flash of Unstyled Content" (FOUC) bug by parsing and executing local viewport settings actively within the document `<head>` DOM allocation. 
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-- **Backend**: Python 3, Flask, Flask-SQLAlchemy (SQLite3)
-- **Frontend**: HTML5, CSS3 Variables (Glassmorphism), Vanilla JavaScript
+- **Backend**: Python 3.8+, Flask, Flask-SQLAlchemy (SQLite3)
+- **Frontend**: HTML5, Vanilla CSS3 (CSS Variables, Flex/Grid matrices), Vanilla JavaScript
 - **Libraries**:
-  - `qrcode[pil]` (Server-side QR generation)
-  - `html5-qrcode` (Browser-Side Camera decoder)
+  - `qrcode[pil]` (Server-side automatic bitmap QR generation)
+  - `html5-qrcode` (Browser-Side Camera feed stream and matrix decoding)
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 - [Python 3.8+](https://www.python.org/downloads/)
@@ -65,7 +64,17 @@ A modern, responsive web application designed for PlayArea businesses to manage 
    ```
    *(The SQLite database `playarea.db` will be initialized automatically on the first request.)*
 
-## Usage Guide
+## 📱 Mobile Camera Testing (Local LAN)
+
+If you are running the development server on your PC (`http://192.168.x.x:5000`) and testing the QR scanner on an Android device, modern mobile browsers will strictly **hardware-block** the `getUserMedia` camera API because it is served over unencrypted HTTP.
+
+**To bypass this for local development testing:**
+1. Open Google Chrome on your Android phone.
+2. Navigate to `chrome://flags/#unsafely-treat-insecure-origin-as-secure`.
+3. Enter your local server URL (e.g., `http://192.168.1.5:5000`) into the text box.
+4. Enable the flag and relaunch the browser. Camera permissions will now successfully prompt!
+
+## 📖 Usage Guide
 
 1. Navigate to the **Customers** page to "Issue New QR" or "Assign Existing QR". Download or capture the QR generated.
 2. Navigate to **Check-in**, allow your browser to use your camera, and wave the QR code in front of the lens. It will verify the customer and pull their entry fee from their balance.
