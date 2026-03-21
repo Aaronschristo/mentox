@@ -53,7 +53,7 @@ def get_stats():
 @app.route('/api/customers', methods=['GET', 'POST'])
 def manage_customers():
     if request.method == 'GET':
-        customers = Customer.query.order_by(Customer.created_at.desc()).all()
+        customers = Customer.query.order_by(Customer.created_at.desc()).limit(100).all()
         return jsonify([{
             'id': c.id,
             'name': c.name,
@@ -87,6 +87,18 @@ def manage_customers():
             
         db.session.commit()
         return jsonify({'message': 'Customer created successfully', 'id': new_customer.id}), 201
+
+@app.route('/api/customers/search', methods=['GET'])
+def search_customers():
+    q = request.args.get('q', '').strip()
+    if not q:
+        return jsonify([])
+    customers = Customer.query.filter(Customer.name.ilike(f'%{q}%')).order_by(Customer.created_at.desc()).limit(15).all()
+    return jsonify([{
+        'id': c.id,
+        'name': c.name,
+        'balance': c.balance
+    } for c in customers])
 
 @app.route('/api/recharge', methods=['POST'])
 def recharge():

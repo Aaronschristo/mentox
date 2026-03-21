@@ -139,61 +139,61 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function setupRechargeAutocomplete() {
-    fetch('/api/customers')
-        .then(res => res.json())
-        .then(data => {
-            window.allCustomers = data;
-        });
-
     const nameInput = document.getElementById('recharge-customer-name');
     const idInput = document.getElementById('recharge-customer-id');
     const autocompleteList = document.getElementById('customer-autocomplete-list');
 
     if(!nameInput) return;
 
+    let debounceTimer;
     nameInput.addEventListener('input', function() {
-        const val = this.value.toLowerCase();
+        clearTimeout(debounceTimer);
+        const val = this.value.trim();
         autocompleteList.innerHTML = '';
+        
         if (!val) {
             autocompleteList.style.display = 'none';
-            // Also blank out the ID
             idInput.value = '';
             return;
         }
 
-        let hasMatches = false;
-        window.allCustomers.forEach(c => {
-            if (c.name.toLowerCase().includes(val)) {
-                hasMatches = true;
-                const div = document.createElement('div');
-                div.style.padding = '10px 15px';
-                div.style.cursor = 'pointer';
-                div.style.borderBottom = '1px solid #e2e8f0';
-                div.style.color = 'var(--text-dark)';
-                div.innerHTML = `<strong>${c.name}</strong> <small style="color: var(--text-light); float: right;">${c.id.substring(0,8)}...</small>`;
-                
-                div.addEventListener('click', function() {
-                    nameInput.value = c.name;
-                    idInput.value = c.id;
-                    autocompleteList.style.display = 'none';
-                });
-                
-                div.addEventListener('mouseenter', function() {
-                    this.style.background = 'var(--secondary-color)';
-                });
-                div.addEventListener('mouseleave', function() {
-                    this.style.background = 'transparent';
-                });
+        debounceTimer = setTimeout(() => {
+            fetch(`/api/customers/search?q=${encodeURIComponent(val)}`)
+                .then(res => res.json())
+                .then(matches => {
+                    autocompleteList.innerHTML = '';
+                    if (matches.length > 0) {
+                        const frag = document.createDocumentFragment();
+                        matches.forEach(m => {
+                            const div = document.createElement('div');
+                            div.style.padding = '10px 15px';
+                            div.style.cursor = 'pointer';
+                            div.style.borderBottom = '1px dashed var(--glass-border)';
+                            div.style.color = 'var(--text-dark)';
+                            div.innerHTML = `<strong>${m.name}</strong> <small style="color: var(--text-light); float: right;">${m.id.substring(0,8)}...</small>`;
+                            
+                            div.addEventListener('click', function() {
+                                nameInput.value = m.name;
+                                idInput.value = m.id;
+                                autocompleteList.style.display = 'none';
+                            });
+                            
+                            div.addEventListener('mouseenter', function() {
+                                this.style.background = 'var(--secondary-color)';
+                            });
+                            div.addEventListener('mouseleave', function() {
+                                this.style.background = 'transparent';
+                            });
 
-                autocompleteList.appendChild(div);
-            }
-        });
-
-        if (hasMatches) {
-            autocompleteList.style.display = 'block';
-        } else {
-            autocompleteList.style.display = 'none';
-        }
+                            frag.appendChild(div);
+                        });
+                        autocompleteList.appendChild(frag);
+                        autocompleteList.style.display = 'block';
+                    } else {
+                        autocompleteList.style.display = 'none';
+                    }
+                });
+        }, 300);
     });
 
     // Close autocomplete when clicking outside
@@ -217,6 +217,7 @@ function loadDashboardStats() {
             if(data.recent_transactions.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-light)">No recent transactions</td></tr>';
             } else {
+                let htmlRows = '';
                 data.recent_transactions.forEach(tx => {
                     const isCheckin = tx.type === 'checkin';
                     const badgeClass = tx.type;
@@ -224,7 +225,7 @@ function loadDashboardStats() {
                     const amountColor = isCheckin ? 'var(--text-dark)' : 'var(--success)';
                     const icon = isCheckin ? 'bx-up-arrow-alt' : 'bx-down-arrow-alt';
                     const iconColor = isCheckin ? 'var(--danger)' : 'var(--success)';
-                    tbody.innerHTML += `
+                    htmlRows += `
                         <tr class="table-row">
                             <td data-label="Customer Name">
                                 <div class="user-info">
@@ -242,6 +243,7 @@ function loadDashboardStats() {
                         </tr>
                     `;
                 });
+                tbody.innerHTML = htmlRows;
             }
         })
         .catch(err => console.error("Could not load stats", err));
@@ -257,8 +259,9 @@ function loadCustomers() {
             if(data.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-light)">No customers found</td></tr>';
             } else {
+                let htmlRows = '';
                 data.forEach(c => {
-                    tbody.innerHTML += `
+                    htmlRows += `
                         <tr class="table-row">
                             <td data-label="Name">
                                 <div class="user-info">
@@ -276,6 +279,7 @@ function loadCustomers() {
                         </tr>
                     `;
                 });
+                tbody.innerHTML = htmlRows;
             }
         });
 }
