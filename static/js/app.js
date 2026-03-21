@@ -271,36 +271,6 @@ function handleRecharge(e) {
     });
 }
 
-let assignScanner = null;
-
-function startAssignQRFlow() {
-    toggleModal('assignQrModal');
-    document.getElementById('assign-step-1').style.display = 'block';
-    document.getElementById('assign-step-2').style.display = 'none';
-    
-    if(!assignScanner) {
-        assignScanner = new Html5QrcodeScanner(
-            "assign-reader",
-            { fps: 10, qrbox: {width: 250, height: 250} },
-            false);
-            
-        assignScanner.render((decodedText) => {
-            document.getElementById('assign-qr-id').value = decodedText;
-            document.getElementById('assign-step-1').style.display = 'none';
-            document.getElementById('assign-step-2').style.display = 'block';
-            assignScanner.clear();
-            assignScanner = null;
-        }, (err) => {});
-    }
-}
-
-function closeAssignQRFlow() {
-    if(assignScanner) {
-        assignScanner.clear();
-        assignScanner = null;
-    }
-    toggleModal('assignQrModal');
-}
 
 function handleAssignExistingQR(e) {
     e.preventDefault();
