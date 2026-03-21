@@ -262,30 +262,85 @@ h2 {
 .table-container {
   overflow-x: auto;
   border-radius: 12px;
+  background: transparent;
 }
 
 table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  padding: 0 5px;
 }
 
 th, td {
-  padding: 15px;
+  padding: 18px 20px;
   text-align: left;
-  border-bottom: 1px solid #e2e8f0;
+  border: none;
 }
 
 th {
-  background-color: var(--secondary-color);
+  background-color: transparent;
   font-weight: 600;
   color: var(--text-light);
   text-transform: uppercase;
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.5px;
+  padding-bottom: 5px;
 }
 
-tr:hover {
-  background-color: var(--white);
+.table-row {
+  background: var(--white);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+  transition: all 0.3s ease;
+  border-radius: 12px;
+}
+
+.table-row td:first-child {
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+}
+
+.table-row td:last-child {
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.table-row:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.02);
+  z-index: 10;
+  position: relative;
+}
+
+[data-theme="dark"] .table-row:hover {
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-info strong {
+  font-size: 15px;
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+.user-id-truncate {
+  font-size: 13px;
+  color: var(--text-light);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  max-width: 25vw;
+}
+
+.text-light {
+  color: var(--text-light);
+  font-size: 14px;
 }
 
 .badge {

@@ -169,14 +169,27 @@ function loadDashboardStats() {
                 tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-light)">No recent transactions</td></tr>';
             } else {
                 data.recent_transactions.forEach(tx => {
+                    const isCheckin = tx.type === 'checkin';
                     const badgeClass = tx.type;
-                    const amountDisplay = tx.type === 'checkin' ? `-₹${tx.amount.toFixed(2)}` : `+₹${tx.amount.toFixed(2)}`;
+                    const amountDisplay = isCheckin ? `-₹${tx.amount.toFixed(2)}` : `+₹${tx.amount.toFixed(2)}`;
+                    const amountColor = isCheckin ? 'var(--text-dark)' : 'var(--success)';
+                    const icon = isCheckin ? 'bx-up-arrow-alt' : 'bx-down-arrow-alt';
+                    const iconColor = isCheckin ? 'var(--danger)' : 'var(--success)';
                     tbody.innerHTML += `
-                        <tr>
-                            <td><strong>${tx.customer_name}</strong></td>
+                        <tr class="table-row">
+                            <td>
+                                <div class="user-info">
+                                    <strong>${tx.customer_name}</strong>
+                                </div>
+                            </td>
                             <td><span class="badge ${badgeClass}">${tx.type}</span></td>
-                            <td style="font-weight:600;">${amountDisplay}</td>
-                            <td style="color: var(--text-light); font-size: 14px;">${tx.created_at}</td>
+                            <td style="font-weight:600; color: ${amountColor};">
+                                <div style="display:flex; align-items:center; gap: 4px;">
+                                    <i class='bx ${icon}' style="color: ${iconColor}; font-size: 18px;"></i>
+                                    ${amountDisplay}
+                                </div>
+                            </td>
+                            <td class="text-light">${tx.created_at}</td>
                         </tr>
                     `;
                 });
@@ -197,12 +210,17 @@ function loadCustomers() {
             } else {
                 data.forEach(c => {
                     tbody.innerHTML += `
-                        <tr>
-                            <td><strong>${c.name}</strong><br><small style="color:var(--text-light); font-size:11px;">${c.id}</small></td>
-                            <td style="font-weight:600; color:var(--success)">${formatCurrency(c.balance)}</td>
-                            <td style="color: var(--text-light); font-size: 14px;">${c.created_at}</td>
+                        <tr class="table-row">
                             <td>
-                                <button class="btn btn-amount" style="padding: 8px 12px;" onclick="showQR('${c.id}', '${c.name}')">
+                                <div class="user-info">
+                                    <strong>${c.name}</strong>
+                                    <span class="user-id-truncate" title="${c.id}">${c.id}</span>
+                                </div>
+                            </td>
+                            <td style="font-weight:600; color:var(--text-dark)">${formatCurrency(c.balance)}</td>
+                            <td class="text-light">${c.created_at}</td>
+                            <td>
+                                <button class="btn btn-amount" style="padding: 6px 12px; font-size: 13px;" onclick="showQR('${c.id}', '${c.name}')">
                                     <i class='bx bx-qr'></i> View
                                 </button>
                             </td>
