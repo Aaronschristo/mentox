@@ -46,27 +46,26 @@ const formatCurrency = (val) => '₹' + parseFloat(val).toFixed(2);
 
 // Theme Toggle
 function toggleTheme() {
-    const isDark = document.body.getAttribute('data-theme') === 'dark';
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     if(isDark) {
-        document.body.removeAttribute('data-theme');
+        document.documentElement.removeAttribute('data-theme');
         localStorage.setItem('theme', 'light');
         document.getElementById('theme-toggle-icon').className = 'bx bx-moon';
     } else {
-        document.body.setAttribute('data-theme', 'dark');
+        document.documentElement.setAttribute('data-theme', 'dark');
         localStorage.setItem('theme', 'dark');
         document.getElementById('theme-toggle-icon').className = 'bx bx-sun';
     }
 }
 
-// Load theme
-const savedTheme = localStorage.getItem('theme');
-if(savedTheme === 'dark') {
-    document.body.setAttribute('data-theme', 'dark');
-    document.addEventListener("DOMContentLoaded", () => {
-        const icon = document.getElementById('theme-toggle-icon');
-        if(icon) icon.className = 'bx bx-sun';
-    });
-}
+// Load theme icon on load
+document.addEventListener("DOMContentLoaded", () => {
+    const savedTheme = localStorage.getItem('theme');
+    const icon = document.getElementById('theme-toggle-icon');
+    if(savedTheme === 'dark' && icon) {
+        icon.className = 'bx bx-sun';
+    }
+});
 
 // Global customers cache for autocomplete
 window.allCustomers = [];
@@ -203,7 +202,7 @@ function loadCustomers() {
                             <td style="font-weight:600; color:var(--success)">${formatCurrency(c.balance)}</td>
                             <td style="color: var(--text-light); font-size: 14px;">${c.created_at}</td>
                             <td>
-                                <button class="btn" style="padding: 8px 12px; background: #e0e7ff; color: var(--primary-color);" onclick="showQR('${c.id}', '${c.name}')">
+                                <button class="btn btn-amount" style="padding: 8px 12px;" onclick="showQR('${c.id}', '${c.name}')">
                                     <i class='bx bx-qr'></i> View
                                 </button>
                             </td>

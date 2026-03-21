@@ -40,7 +40,7 @@
 <!-- Modal for Issue QR -->
 <div id="issueQrModal" class="modal"
     style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-    <div class="glass-card" style="width: 100%; max-width: 500px; background: white; margin: 20px;">
+    <div class="glass-card" style="width: 100%; max-width: 500px; margin: 20px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 style="margin: 0;">Issue QR Code</h2>
             <i class='bx bx-x' style="font-size: 24px; cursor: pointer;" onclick="toggleModal('issueQrModal')"></i>
@@ -62,7 +62,7 @@
 <!-- Modal to View Generated QR -->
 <div id="viewQrModal" class="modal"
     style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-    <div class="glass-card" style="width: 100%; max-width: 400px; background: white; margin: 20px; text-align: center;">
+    <div class="glass-card" style="width: 100%; max-width: 400px; margin: 20px; text-align: center;">
         <div style="display: flex; justify-content: flex-end;">
             <i class='bx bx-x' style="font-size: 24px; cursor: pointer;" onclick="toggleModal('viewQrModal')"></i>
         </div>
@@ -86,7 +86,7 @@
 <!-- Modal for Assign Existing QR -->
 <div id="assignQrModal" class="modal"
     style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-    <div class="glass-card" style="width: 100%; max-width: 900px; background: white; margin: 20px; padding: 30px;">
+    <div class="glass-card" style="width: 100%; max-width: 900px; margin: 20px; padding: 30px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 style="margin: 0;">Assign Existing QR</h2>
             <i class='bx bx-x' style="font-size: 24px; cursor: pointer;" onclick="closeAssignQRFlow()"></i>
@@ -165,10 +165,9 @@
     let assignHtml5QrCode = null;
     let isAssignCameraActive = false;
     let isAssignProcessing = false;
+    let isScannerInitialized = false;
 
     document.addEventListener("DOMContentLoaded", () => {
-        assignHtml5QrCode = new Html5Qrcode("assign-reader");
-
         // Elements
         const btnToggle = document.getElementById("assign-btn-toggle");
         const cameraSelect = document.getElementById("assign-camera-select");
@@ -184,22 +183,30 @@
             overlaySuccess.classList.add("hidden");
         }
 
-        // Fetch cameras
-        Html5Qrcode.getCameras().then(devices => {
-            if (devices && devices.length) {
-                cameraSelect.innerHTML = "";
-                devices.forEach(camera => {
-                    const option = document.createElement("option");
-                    option.value = camera.id;
-                    option.text = camera.label || `Camera ${cameraSelect.length + 1}`;
-                    cameraSelect.appendChild(option);
-                });
-            } else {
-                cameraSelect.innerHTML = "<option value=''>No cameras found</option>";
-            }
-        }).catch(err => {
-            cameraSelect.innerHTML = "<option value=''>Camera access denied</option>";
-        });
+        window.initAssignScannerDependencies = function() {
+            if (isScannerInitialized) return;
+            
+            assignHtml5QrCode = new Html5Qrcode("assign-reader");
+
+            // Fetch cameras
+            Html5Qrcode.getCameras().then(devices => {
+                if (devices && devices.length) {
+                    cameraSelect.innerHTML = "";
+                    devices.forEach(camera => {
+                        const option = document.createElement("option");
+                        option.value = camera.id;
+                        option.text = camera.label || `Camera ${cameraSelect.length + 1}`;
+                        cameraSelect.appendChild(option);
+                    });
+                } else {
+                    cameraSelect.innerHTML = "<option value=''>No cameras found</option>";
+                }
+            }).catch(err => {
+                cameraSelect.innerHTML = "<option value=''>Camera access denied</option>";
+            });
+            
+            isScannerInitialized = true;
+        };
 
         // Expose start/stop strictly for flow handlers
         window.startAssignScanner = function (cameraId) {
@@ -228,7 +235,7 @@
         };
 
         window.stopAssignScanner = function () {
-            if (isAssignCameraActive) {
+            if (isAssignCameraActive && assignHtml5QrCode) {
                 assignHtml5QrCode.stop().then(() => {
                     isAssignCameraActive = false;
                     hideAllOverlays();
@@ -251,7 +258,7 @@
             if (isAssignProcessing) return;
             isAssignProcessing = true;
 
-            if (assignHtml5QrCode.pause) {
+            if (assignHtml5QrCode && assignHtml5QrCode.pause) {
                 try { assignHtml5QrCode.pause(); } catch (e) { }
             }
 
@@ -281,6 +288,11 @@
         toggleModal('assignQrModal');
         document.getElementById('assign-qr-form').reset();
         document.getElementById('assign-qr-id').value = '';
+        
+        // Initialize camera libraries on demand
+        if (window.initAssignScannerDependencies) {
+            window.initAssignScannerDependencies();
+        }
     }
 
     window.closeAssignQRFlow = function () {

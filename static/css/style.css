@@ -175,6 +175,7 @@ h2 {
 .text-gradient {
   background: linear-gradient(135deg, var(--primary-color), #a855f7);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -197,7 +198,8 @@ h2 {
   border-radius: 8px;
   font-size: 16px;
   transition: var(--transition);
-  background: rgba(255,255,255,0.8);
+  background: var(--white);
+  color: var(--text-dark);
 }
 
 .form-input:focus {
@@ -231,6 +233,31 @@ h2 {
   box-shadow: 0 6px 10px rgba(99, 102, 241, 0.4);
 }
 
+/* Quick Amount Buttons */
+.btn-amount {
+  background: #e0e7ff;
+  color: var(--primary-color);
+  border-radius: 10px;
+}
+
+.btn-amount:hover {
+  background: #c3d2ff;
+  transform: translateY(-2px);
+}
+
+[data-theme="dark"] .btn-amount {
+  background: #1e293b;
+  color: #c7d2fe;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .btn-amount:hover {
+  background: #27354f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
 /* Tables */
 .table-container {
   overflow-x: auto;
@@ -249,7 +276,7 @@ th, td {
 }
 
 th {
-  background-color: rgba(248, 250, 252, 0.8);
+  background-color: var(--secondary-color);
   font-weight: 600;
   color: var(--text-light);
   text-transform: uppercase;
