@@ -1,3 +1,14 @@
+// XSS Sanitizer
+const escapeHTML = (str) => {
+    return String(str).replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+    }[tag] || tag));
+};
+
 // Toast Notifications
 function showToast(message, type = 'success') {
     const container = document.getElementById('toast-container');
@@ -170,7 +181,7 @@ function setupRechargeAutocomplete() {
                             div.style.cursor = 'pointer';
                             div.style.borderBottom = '1px dashed var(--glass-border)';
                             div.style.color = 'var(--text-dark)';
-                            div.innerHTML = `<strong>${m.name}</strong> <small style="color: var(--text-light); float: right;">${m.id.substring(0,8)}...</small>`;
+                            div.innerHTML = `<strong>${escapeHTML(m.name)}</strong> <small style="color: var(--text-light); float: right;">${escapeHTML(m.id).substring(0,8)}...</small>`;
                             
                             div.addEventListener('click', function() {
                                 nameInput.value = m.name;
@@ -229,7 +240,7 @@ function loadDashboardStats() {
                         <tr class="table-row">
                             <td data-label="Customer Name">
                                 <div class="user-info">
-                                    <strong>${tx.customer_name}</strong>
+                                    <strong>${escapeHTML(tx.customer_name)}</strong>
                                 </div>
                             </td>
                             <td data-label="Type"><span class="badge ${badgeClass}">${tx.type}</span></td>
@@ -265,8 +276,8 @@ function loadCustomers() {
                         <tr class="table-row">
                             <td data-label="Name">
                                 <div class="user-info">
-                                    <strong>${c.name}</strong>
-                                    <span class="user-id-truncate" title="${c.id}">${c.id}</span>
+                                    <strong>${escapeHTML(c.name)}</strong>
+                                    <span class="user-id-truncate" title="${escapeHTML(c.id)}">${escapeHTML(c.id)}</span>
                                 </div>
                             </td>
                             <td data-label="Balance" style="font-weight:600; color:var(--text-dark)">${formatCurrency(c.balance)}</td>

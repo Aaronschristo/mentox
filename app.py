@@ -70,6 +70,9 @@ def manage_customers():
         if not name:
             return jsonify({'error': 'Name is required'}), 400
             
+        if initial_balance < 0:
+            return jsonify({'error': 'Initial balance cannot be negative'}), 400
+            
         if qr_id:
             # Check if this QR ID already exists
             existing = Customer.query.get(qr_id)
@@ -168,4 +171,4 @@ def generate_qr(customer_id):
     return send_file(img_io, mimetype='image/png')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(host='0.0.0.0')
