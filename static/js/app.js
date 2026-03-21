@@ -151,6 +151,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Customers Table
     if(document.getElementById('customers-table-body')) {
         loadCustomers();
+        
+        const searchInput = document.getElementById('customer-search-input');
+        if (searchInput) {
+            let searchTimer;
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(() => {
+                    loadCustomers(e.target.value.trim());
+                }, 300);
+            });
+        }
     }
 
     // Recharge Autocomplete
@@ -270,8 +281,9 @@ function loadDashboardStats() {
         .catch(err => console.error("Could not load stats", err));
 }
 
-function loadCustomers() {
-    fetch('/api/customers')
+function loadCustomers(query = '') {
+    const url = query ? `/api/customers/search?q=${encodeURIComponent(query)}` : '/api/customers';
+    fetch(url)
         .then(res => res.json())
         .then(data => {
             const tbody = document.getElementById('customers-table-body');

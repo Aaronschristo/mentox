@@ -112,7 +112,8 @@ def search_customers():
     return jsonify([{
         'id': c.id,
         'name': c.name,
-        'balance': c.balance
+        'balance': c.balance,
+        'created_at': c.created_at.strftime('%Y-%m-%d %H:%M:%S')
     } for c in customers])
 
 @app.route('/api/recharge', methods=['POST'])
