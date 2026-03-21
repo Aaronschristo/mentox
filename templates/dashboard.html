@@ -27,11 +27,13 @@
 </div>
 
 <div class="glass-card">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2>Recent Transactions</h2>
-        <button onclick="loadDashboardStats()" class="btn btn-amount">
-            <i class='bx bx-refresh'></i> Refresh
-        </button>
+    <div class="flex-header dashboard-header" style="margin-bottom: 20px;">
+        <h2 style="margin: 0;">Recent Transactions</h2>
+        <div class="header-buttons">
+            <button onclick="loadDashboardStats()" class="btn btn-amount dashboard-refresh-btn">
+                <i class='bx bx-refresh'></i> <span class="hide-on-mobile">Refresh</span>
+            </button>
+        </div>
     </div>
     <div class="table-container">
         <table>

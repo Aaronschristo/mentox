@@ -77,11 +77,50 @@ document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.querySelector(".sidebar");
     const sidebarBtn = document.querySelector(".sidebarBtn");
     
+    // Inject overlay automatically
+    const overlay = document.createElement('div');
+    overlay.className = 'sidebar-overlay';
+    document.body.appendChild(overlay);
+
+    // Inject mobile close button into sidebar directly
+    const logoDetails = document.querySelector(".sidebar .logo-details");
+    let closeBtn = null;
+    if (logoDetails) {
+        closeBtn = document.createElement("i");
+        closeBtn.className = "bx bx-x mobile-closeBtn";
+        closeBtn.style.display = window.innerWidth <= 768 ? "block" : "none";
+        closeBtn.style.fontSize = "28px";
+        closeBtn.style.cursor = "pointer";
+        closeBtn.style.marginLeft = "auto";
+        closeBtn.style.marginRight = "15px";
+        closeBtn.style.color = "var(--primary-color)";
+        logoDetails.style.width = "100%";
+        logoDetails.appendChild(closeBtn);
+
+        closeBtn.addEventListener('click', () => {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+        });
+
+        window.addEventListener("resize", () => {
+            closeBtn.style.display = window.innerWidth <= 768 ? "block" : "none";
+        });
+    }
+
     if(sidebarBtn) {
         sidebarBtn.addEventListener("click", () => {
             sidebar.classList.toggle("active");
+            if (window.innerWidth <= 768) {
+                overlay.classList.toggle("active", sidebar.classList.contains("active"));
+            }
         });
     }
+
+    // Canvas clickoff dismisses the sidebar automatically
+    overlay.addEventListener('click', () => {
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+    });
 
     // Dashboard Stats
     if(document.getElementById('total-customers')) {
@@ -187,19 +226,19 @@ function loadDashboardStats() {
                     const iconColor = isCheckin ? 'var(--danger)' : 'var(--success)';
                     tbody.innerHTML += `
                         <tr class="table-row">
-                            <td>
+                            <td data-label="Customer Name">
                                 <div class="user-info">
                                     <strong>${tx.customer_name}</strong>
                                 </div>
                             </td>
-                            <td><span class="badge ${badgeClass}">${tx.type}</span></td>
-                            <td style="font-weight:600; color: ${amountColor};">
-                                <div style="display:flex; align-items:center; gap: 4px;">
+                            <td data-label="Type"><span class="badge ${badgeClass}">${tx.type}</span></td>
+                            <td data-label="Amount" style="font-weight:600; color: ${amountColor};">
+                                <div style="display:flex; align-items:center; gap: 4px; justify-content: flex-end;">
                                     <i class='bx ${icon}' style="color: ${iconColor}; font-size: 18px;"></i>
                                     ${amountDisplay}
                                 </div>
                             </td>
-                            <td class="text-light">${tx.created_at}</td>
+                            <td data-label="Date" class="text-light">${tx.created_at}</td>
                         </tr>
                     `;
                 });
@@ -221,15 +260,15 @@ function loadCustomers() {
                 data.forEach(c => {
                     tbody.innerHTML += `
                         <tr class="table-row">
-                            <td>
+                            <td data-label="Name">
                                 <div class="user-info">
                                     <strong>${c.name}</strong>
                                     <span class="user-id-truncate" title="${c.id}">${c.id}</span>
                                 </div>
                             </td>
-                            <td style="font-weight:600; color:var(--text-dark)">${formatCurrency(c.balance)}</td>
-                            <td class="text-light">${c.created_at}</td>
-                            <td>
+                            <td data-label="Balance" style="font-weight:600; color:var(--text-dark)">${formatCurrency(c.balance)}</td>
+                            <td data-label="Registered" class="text-light">${c.created_at}</td>
+                            <td data-label="Action">
                                 <button class="btn btn-amount" style="padding: 6px 12px; font-size: 13px;" onclick="showQR('${c.id}', '${c.name}')">
                                     <i class='bx bx-qr'></i> View
                                 </button>

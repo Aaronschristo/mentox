@@ -374,6 +374,146 @@ th {
   font-size: 14px;
 }
 
+/* Sidebar Overlay */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 998;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.sidebar-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Responsive Flex Layouts */
+.flex-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .flex-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .header-buttons {
+    width: 100%;
+    flex-direction: column;
+  }
+  .header-buttons .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .content {
+    padding: 15px !important;
+  }
+  
+  .topbar {
+    padding: 0 15px;
+    height: 70px;
+  }
+  
+  .glass-card {
+    padding: 18px !important;
+  }
+  
+  /* Redesign Tables into mobile card-stack format */
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+  
+  thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  
+  .table-row {
+    margin-bottom: 20px;
+    border-radius: 12px;
+    padding: 10px 20px;
+  }
+  
+  .table-row td {
+    position: relative;
+    padding: 14px 0;
+    text-align: right;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed rgba(0,0,0,0.1) !important;
+    white-space: normal;
+  }
+
+  [data-theme="dark"] .table-row td {
+    border-bottom: 1px dashed rgba(255,255,255,0.05) !important;
+  }
+  
+  .table-row td:last-child {
+    border-bottom: none !important;
+  }
+  
+  .table-row td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-align: left;
+    padding-right: 15px;
+  }
+
+  .user-info {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Specific Override for Dashboard Header on Mobile */
+  .dashboard-header {
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .dashboard-header .header-buttons {
+    width: auto;
+    flex-direction: row;
+  }
+  
+  .dashboard-header .btn {
+    width: auto;
+    padding: 8px 12px;
+  }
+  
+  .hide-on-mobile {
+    display: none;
+  }
+  
+  .dashboard-refresh-btn i {
+    font-size: 22px;
+    margin: 0;
+  }
+}
+
 .badge {
   padding: 5px 10px;
   border-radius: 20px;

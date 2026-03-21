@@ -3,12 +3,10 @@
 {% block title %}Customers & QR Codes{% endblock %}
 
 {% block content %}
-<div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
-    <h2>Manage Customers</h2>
-    <div>
-        <button class="btn"
-            style="background: var(--white); color: var(--primary-color); border: 1px solid var(--primary-color); margin-right: 10px;"
-            onclick="startAssignQRFlow()">
+<div class="flex-header">
+    <h2 style="margin: 0;">Manage Customers</h2>
+    <div class="header-buttons">
+        <button class="btn" style="background: var(--white); color: var(--primary-color); border: 1px solid var(--primary-color);" onclick="startAssignQRFlow()">
             <i class='bx bx-qr-scan'></i> Assign Existing QR
         </button>
         <button class="btn btn-primary" onclick="toggleModal('issueQrModal')">
@@ -40,7 +38,7 @@
 <!-- Modal for Issue QR -->
 <div id="issueQrModal" class="modal"
     style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-    <div class="glass-card" style="width: 100%; max-width: 500px; margin: 20px;">
+    <div class="glass-card" style="width: 90%; max-width: 500px; margin: auto;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 style="margin: 0;">Issue QR Code</h2>
             <i class='bx bx-x' style="font-size: 24px; cursor: pointer;" onclick="toggleModal('issueQrModal')"></i>
@@ -62,7 +60,7 @@
 <!-- Modal to View Generated QR -->
 <div id="viewQrModal" class="modal"
     style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-    <div class="glass-card" style="width: 100%; max-width: 400px; margin: 20px; text-align: center;">
+    <div class="glass-card" style="width: 90%; max-width: 400px; margin: auto; text-align: center;">
         <div style="display: flex; justify-content: flex-end;">
             <i class='bx bx-x' style="font-size: 24px; cursor: pointer;" onclick="toggleModal('viewQrModal')"></i>
         </div>
@@ -86,7 +84,7 @@
 <!-- Modal for Assign Existing QR -->
 <div id="assignQrModal" class="modal"
     style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-    <div class="glass-card" style="width: 100%; max-width: 900px; margin: 20px; padding: 30px;">
+    <div class="glass-card" style="width: 95%; max-width: 900px; margin: auto; padding: 25px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 style="margin: 0;">Assign Existing QR</h2>
             <i class='bx bx-x' style="font-size: 24px; cursor: pointer;" onclick="closeAssignQRFlow()"></i>
