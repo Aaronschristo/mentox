@@ -12,8 +12,16 @@ venv.bak/
 
 # SQLite Database
 playarea.db
+playarea.db-shm
+playarea.db-wal
 *.sqlite3
 *.db
+*.db-shm
+*.db-wal
+
+# Logging
+*.log
+*.log.*
 
 # OS generated files
 .DS_Store
