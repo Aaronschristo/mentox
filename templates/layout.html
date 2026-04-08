@@ -9,14 +9,14 @@
     <!-- Boxicons -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=1.3">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=1.4">
     <!-- Prevent FOUC: Apply dark mode immediately during parse -->
     <script>
-        if (localStorage.getItem('theme') === 'dark') {
+        if (localStorage.getItem('theme') !== 'light') {
             document.documentElement.setAttribute('data-theme', 'dark');
         }
     </script>
-    <script src="{{ url_for('static', filename='js/app.js') }}?v=1.3" defer></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}?v=1.4" defer></script>
 </head>
 <body class="preload">
     <div class="app-container">

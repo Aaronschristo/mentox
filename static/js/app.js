@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 50);
     const savedTheme = localStorage.getItem('theme');
     const icon = document.getElementById('theme-toggle-icon');
-    if(savedTheme === 'dark' && icon) {
+    if(savedTheme !== 'light' && icon) {
         icon.className = 'bx bx-sun';
     }
 });
