@@ -1,5 +1,7 @@
 # PlayArea Management App
 
+🌍 **Live Demo:** [https://aaronschristo.pythonanywhere.com/](https://aaronschristo.pythonanywhere.com/)
+
 A premium, fully responsive web application designed for PlayArea businesses to manage digital customer check-ins, top-ups, and point-of-sale functionality using QR code scanning capabilities. Built with Flask, SQLite, and vanilla Javascript.
 
 ## ✨ Premium Features
