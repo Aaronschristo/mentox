@@ -12,12 +12,14 @@
 </div>
 
 <div class="glass-card" style="padding: 30px;">
-    <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 15px;">
+    <div class="chart-header"
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 15px;">
         <h2 style="margin: 0; font-size: 20px; color: var(--text-dark);">Number of Check-ins</h2>
-        
+
         <div class="date-controls" style="display: flex; align-items: center; gap: 15px;">
             <i class='bx bx-chevron-left date-nav-btn' onclick="shiftDate(-1)"></i>
-            <span id="date-display" style="font-weight: 500; color: var(--text-light); min-width: 180px; text-align: center;">Loading...</span>
+            <span id="date-display"
+                style="font-weight: 500; color: var(--text-light); min-width: 180px; text-align: center;">Loading...</span>
             <i class='bx bx-chevron-right date-nav-btn' onclick="shiftDate(1)"></i>
         </div>
 
@@ -40,12 +42,12 @@
         background: rgba(238, 242, 246, 0.8);
         border-radius: 12px;
         padding: 4px;
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
     }
-    
+
     [data-theme="dark"] .toggle-container {
         background: rgba(15, 23, 42, 0.6);
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
     }
 
     .toggle-bg {
@@ -57,7 +59,7 @@
         background: white;
         border-radius: 8px;
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
     [data-theme="dark"] .toggle-bg {
@@ -139,15 +141,19 @@
         backdrop-filter: blur(12px) !important;
         -webkit-backdrop-filter: blur(12px) !important;
         border: 1px solid var(--glass-border) !important;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
         border-radius: 16px !important;
         font-family: 'Poppins', sans-serif !important;
         color: var(--text-dark) !important;
     }
-    .flatpickr-calendar.arrowTop:before, .flatpickr-calendar.arrowTop:after,
-    .flatpickr-calendar.arrowBottom:before, .flatpickr-calendar.arrowBottom:after {
+
+    .flatpickr-calendar.arrowTop:before,
+    .flatpickr-calendar.arrowTop:after,
+    .flatpickr-calendar.arrowBottom:before,
+    .flatpickr-calendar.arrowBottom:after {
         display: none !important;
     }
+
     .flatpickr-current-month {
         display: flex !important;
         align-items: center !important;
@@ -155,6 +161,7 @@
         padding-top: 5px !important;
         gap: 5px !important;
     }
+
     .flatpickr-current-month input.cur-year {
         color: var(--text-dark) !important;
         font-weight: 700 !important;
@@ -163,10 +170,13 @@
         border-radius: 8px !important;
         transition: background 0.2s ease !important;
     }
-    .flatpickr-current-month input.cur-year:hover, .flatpickr-current-month input.cur-year:focus {
+
+    .flatpickr-current-month input.cur-year:hover,
+    .flatpickr-current-month input.cur-year:focus {
         background: rgba(99, 102, 241, 0.2) !important;
         outline: none !important;
     }
+
     .flatpickr-current-month .flatpickr-monthDropdown-months {
         color: var(--text-dark) !important;
         font-weight: 700 !important;
@@ -180,36 +190,50 @@
         transition: background 0.2s ease !important;
         text-align: center !important;
     }
+
     .flatpickr-current-month .flatpickr-monthDropdown-months:hover {
         background: rgba(99, 102, 241, 0.2) !important;
     }
+
     .flatpickr-current-month .flatpickr-monthDropdown-months option {
         color: #000 !important;
         background: #fff !important;
     }
+
     [data-theme="dark"] .flatpickr-current-month .flatpickr-monthDropdown-months option {
         color: #fff !important;
-        background: #1e293b !important; /* Dark mode bounds */
+        background: #1e293b !important;
+        /* Dark mode bounds */
     }
+
     span.flatpickr-weekday {
         color: var(--text-light) !important;
         font-weight: 600 !important;
     }
+
     .flatpickr-day {
         color: var(--text-dark) !important;
         border-radius: 8px !important;
     }
-    .flatpickr-day:hover, .flatpickr-day:focus {
+
+    .flatpickr-day:hover,
+    .flatpickr-day:focus {
         background: rgba(99, 102, 241, 0.1) !important;
         border-color: transparent !important;
         color: var(--primary-color) !important;
     }
-    .flatpickr-day.selected, .flatpickr-day.selected:hover, .flatpickr-day.selected:focus {
+
+    .flatpickr-day.selected,
+    .flatpickr-day.selected:hover,
+    .flatpickr-day.selected:focus {
         background: var(--primary-color) !important;
         border-color: var(--primary-color) !important;
         color: white !important;
     }
-    .flatpickr-day.flatpickr-disabled, .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
+
+    .flatpickr-day.flatpickr-disabled,
+    .flatpickr-day.prevMonthDay,
+    .flatpickr-day.nextMonthDay {
         color: var(--text-light) !important;
         opacity: 0.5 !important;
     }
@@ -218,13 +242,14 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    let currentInterval = 'hourly';
-    let currentDate = new Date();
+    let currentInterval = localStorage.getItem('analytics_interval') || 'hourly';
+    let savedDate = localStorage.getItem('analytics_date');
+    let currentDate = savedDate ? new Date(parseInt(savedDate)) : new Date();
     let analyticsChart = null;
 
     function initChart() {
         const ctx = document.getElementById('analyticsChart').getContext('2d');
-        
+
         Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--text-light').trim();
         Chart.defaults.font.family = "'Poppins', sans-serif";
 
@@ -265,7 +290,7 @@
                             precision: 0 // Integer numbers only
                         },
                         grid: {
-                            color: function() {
+                            color: function () {
                                 return document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
                             },
                             drawBorder: false
@@ -292,7 +317,7 @@
         // Enforce localized Date parsing without UTC offset shifts taking place implicitly!
         const d = new Date(dateStr + 'T00:00:00');
         const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-        
+
         if (interval === 'hourly') {
             return d.toLocaleDateString(undefined, options);
         } else {
@@ -308,36 +333,38 @@
         fetch(`/api/analytics?interval=${currentInterval}&date=${apiDate}`)
             .then(res => res.json())
             .then(data => {
-                if(data.error) {
+                if (data.error) {
                     console.error(data.error);
                     return;
                 }
-                
+
                 document.getElementById('date-display').innerText = formatDisplayDate(data.start, currentInterval, data.end);
-                
+
                 analyticsChart.data.labels = data.labels;
                 analyticsChart.data.datasets[0].data = data.data;
 
                 // Sync grid colors explicitly for dark mode transitions
                 const gridColor = document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
                 const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-light').trim();
-                
+
                 analyticsChart.options.scales.y.grid.color = gridColor;
                 analyticsChart.options.scales.x.ticks.color = textColor;
                 analyticsChart.options.scales.y.ticks.color = textColor;
-                
+
                 analyticsChart.update();
             });
     }
 
     function switchInterval(interval) {
         if (currentInterval === interval) return;
-        
+
         currentInterval = interval;
+        localStorage.setItem('analytics_interval', interval);
+
         const container = document.querySelector('.toggle-container');
         document.getElementById('btn-hourly').classList.remove('active');
         document.getElementById('btn-daily').classList.remove('active');
-        
+
         if (interval === 'daily') {
             container.classList.add('daily');
             document.getElementById('btn-daily').classList.add('active');
@@ -345,7 +372,7 @@
             container.classList.remove('daily');
             document.getElementById('btn-hourly').classList.add('active');
         }
-        
+
         fetchAnalytics();
     }
 
@@ -355,19 +382,13 @@
         } else {
             currentDate.setDate(currentDate.getDate() + (direction * 7));
         }
+        localStorage.setItem('analytics_date', currentDate.getTime());
         fetchAnalytics();
-    }
-
-    function handleDatePicked(e) {
-        if(e.target.value) {
-            currentDate = new Date(e.target.value + 'T00:00:00');
-            fetchAnalytics();
-        }
     }
 
     // Capture theme toggle clicks stringently mapped to the Chart to push native redraws.
     const originalToggleTheme = window.toggleTheme;
-    window.toggleTheme = function() {
+    window.toggleTheme = function () {
         originalToggleTheme();
         setTimeout(() => {
             if (analyticsChart) {
@@ -382,14 +403,24 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+        // Hydrate UI State
+        if (currentInterval === 'daily') {
+            const container = document.querySelector('.toggle-container');
+            document.getElementById('btn-hourly').classList.remove('active');
+            document.getElementById('btn-daily').classList.add('active');
+            container.classList.add('daily');
+        }
+
         initChart();
         fetchAnalytics();
-        
+
         flatpickr("#aesthetic-date-picker", {
             disableMobile: "true", // Force custom UI bounding strictly over Safari/Chrome limits
-            onChange: function(selectedDates, dateStr, instance) {
-                if(selectedDates.length > 0) {
+            defaultDate: currentDate,
+            onChange: function (selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
                     currentDate = selectedDates[0];
+                    localStorage.setItem('analytics_date', currentDate.getTime());
                     fetchAnalytics();
                 }
             }
