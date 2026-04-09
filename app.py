@@ -184,6 +184,7 @@ def search_customers():
 @app.route('/api/analytics', methods=['GET'])
 def get_analytics():
     interval = request.args.get('interval', 'hourly')
+    metric = request.args.get('metric', 'customers')
     target_date_str = request.args.get('date')
 
     if not target_date_str:
@@ -198,10 +199,12 @@ def get_analytics():
         start_of_day = target_date.replace(hour=0, minute=0, second=0, microsecond=0)
         end_of_day = start_of_day + timedelta(days=1)
 
+        agg_func = func.sum(Transaction.amount) if metric == 'revenue' else func.count(Transaction.id)
+
         # Fix: GROUP BY in the database — returns at most 24 rows instead of all transactions
         results = db.session.query(
             func.strftime('%H', Transaction.created_at).label('hour'),
-            func.count(Transaction.id).label('count')
+            agg_func.label('val')
         ).filter(
             Transaction.type == 'checkin',
             Transaction.created_at >= start_of_day,
@@ -210,7 +213,9 @@ def get_analytics():
 
         hourly_counts = [0] * 24
         for row in results:
-            hourly_counts[int(row.hour)] += row.count
+            val = row.val or 0
+            if metric == 'revenue': val = abs(val)
+            hourly_counts[int(row.hour)] += val
 
         return jsonify({
             'labels': [f'{h:02d}:00' for h in range(24)],
@@ -223,11 +228,13 @@ def get_analytics():
         start_of_week = target_date.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=target_date.weekday())
         end_of_week = start_of_week + timedelta(days=7)
 
+        agg_func = func.sum(Transaction.amount) if metric == 'revenue' else func.count(Transaction.id)
+
         # Fix: GROUP BY in the database — returns at most 7 rows instead of all transactions
         # SQLite %w: 0=Sunday, 1=Monday, ..., 6=Saturday
         results = db.session.query(
             func.strftime('%w', Transaction.created_at).label('weekday'),
-            func.count(Transaction.id).label('count')
+            agg_func.label('val')
         ).filter(
             Transaction.type == 'checkin',
             Transaction.created_at >= start_of_week,
@@ -236,10 +243,12 @@ def get_analytics():
 
         daily_counts = [0] * 7
         for row in results:
+            val = row.val or 0
+            if metric == 'revenue': val = abs(val)
             # Convert SQLite weekday (0=Sun..6=Sat) → Python weekday (0=Mon..6=Sun)
             sqlite_day = int(row.weekday)
             python_day = (sqlite_day - 1) % 7
-            daily_counts[python_day] += row.count
+            daily_counts[python_day] += val
 
         return jsonify({
             'labels': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
