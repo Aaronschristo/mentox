@@ -3,7 +3,7 @@
 {% block title %}Business Statistics{% endblock %}
 
 {% block content %}
-<div class="analytics-header" style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+<div class="analytics-header">
     <div class="toggle-container">
         <div class="toggle-bg"></div>
         <button class="toggle-btn active" id="btn-hourly" onclick="switchInterval('hourly')">Hourly</button>
@@ -11,31 +11,116 @@
     </div>
 </div>
 
-<div class="glass-card" style="padding: 30px;">
-    <div class="chart-header"
-        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 15px;">
-        <h2 style="margin: 0; font-size: 20px; color: var(--text-dark);">Number of Check-ins</h2>
+<div class="glass-card analytics-card">
+    <div class="chart-header">
+        <h2 class="chart-title">Number of Check-ins</h2>
 
-        <div class="date-controls" style="display: flex; align-items: center; gap: 15px;">
+        <div class="date-controls">
             <i class='bx bx-chevron-left date-nav-btn' onclick="shiftDate(-1)"></i>
-            <span id="date-display"
-                style="font-weight: 500; color: var(--text-light); min-width: 180px; text-align: center;">Loading...</span>
+            <span id="date-display">Loading...</span>
             <i class='bx bx-chevron-right date-nav-btn' onclick="shiftDate(1)"></i>
         </div>
 
-        <div style="position: relative;">
+        <div class="picker-container">
             <button id="aesthetic-date-picker" class="btn date-picker-btn">
                 <i class='bx bx-calendar'></i> Pick Date
             </button>
         </div>
     </div>
 
-    <div class="chart-container" style="position: relative; height: 400px; width: 100%;">
+    <div class="chart-container">
         <canvas id="analyticsChart"></canvas>
     </div>
 </div>
 
 <style>
+    /* Structural Layout Variables */
+    .analytics-header {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 20px;
+    }
+    .analytics-card {
+        padding: 30px;
+    }
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    .chart-title {
+        margin: 0;
+        font-size: 20px;
+        color: var(--text-dark);
+    }
+    .date-controls {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    #date-display {
+        font-weight: 500;
+        color: var(--text-light);
+        min-width: 180px;
+        text-align: center;
+    }
+    .picker-container {
+        position: relative;
+    }
+    .chart-container {
+        position: relative;
+        height: 400px;
+        width: 100%;
+    }
+
+    /* Mobile Responsive Rendering */
+    @media (max-width: 768px) {
+        .analytics-header {
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        .analytics-card {
+            padding: 20px 15px;
+        }
+        .chart-header {
+            flex-direction: column;
+            align-items: stretch;
+            margin-bottom: 25px;
+            gap: 18px;
+        }
+        .chart-title {
+            text-align: center;
+        }
+        .date-controls {
+            width: 100%;
+            justify-content: space-between;
+            background: rgba(99, 102, 241, 0.05);
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 1px dashed rgba(99, 102, 241, 0.2);
+        }
+        [data-theme="dark"] .date-controls {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+        #date-display {
+            min-width: unset;
+            font-size: 14px;
+        }
+        .picker-container {
+            width: 100%;
+        }
+        .date-picker-btn {
+            width: 100%; 
+            justify-content: center;
+        }
+        .chart-container {
+            height: 300px;
+        }
+    }
     .toggle-container {
         position: relative;
         display: inline-flex;
