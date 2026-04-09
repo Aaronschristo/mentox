@@ -1,6 +1,7 @@
 import os
 import io
 import qrcode
+from datetime import datetime, timedelta
 from flask import Flask, render_template, request, jsonify, send_file
 from models import db, Customer, Transaction
 
@@ -29,6 +30,10 @@ def recharge_page():
 @app.route('/scan')
 def scan_page():
     return render_template('scan.html')
+
+@app.route('/analytics')
+def analytics_page():
+    return render_template('analytics.html')
 
 # API Endpoints
 
@@ -115,6 +120,63 @@ def search_customers():
         'balance': c.balance,
         'created_at': c.created_at.strftime('%Y-%m-%d %H:%M:%S')
     } for c in customers])
+
+@app.route('/api/analytics', methods=['GET'])
+def get_analytics():
+    interval = request.args.get('interval', 'hourly')
+    target_date_str = request.args.get('date') 
+    
+    if not target_date_str:
+        target_date = datetime.utcnow()
+    else:
+        try:
+            target_date = datetime.strptime(target_date_str, '%Y-%m-%d')
+        except ValueError:
+            return jsonify({'error': 'Invalid date format. Use YYYY-MM-DD'}), 400
+
+    if interval == 'hourly':
+        start_of_day = target_date.replace(hour=0, minute=0, second=0, microsecond=0)
+        end_of_day = start_of_day + timedelta(days=1)
+        
+        txs = Transaction.query.filter(
+            Transaction.type == 'checkin',
+            Transaction.created_at >= start_of_day,
+            Transaction.created_at < end_of_day
+        ).all()
+        
+        hourly_counts = [0] * 24
+        for tx in txs:
+            hourly_counts[tx.created_at.hour] += 1
+            
+        return jsonify({
+            'labels': [f'{h:02d}:00' for h in range(24)],
+            'data': hourly_counts,
+            'start': start_of_day.strftime('%Y-%m-%d'),
+            'end': start_of_day.strftime('%Y-%m-%d')
+        })
+        
+    elif interval == 'daily':
+        start_of_week = target_date.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=target_date.weekday())
+        end_of_week = start_of_week + timedelta(days=7)
+        
+        txs = Transaction.query.filter(
+            Transaction.type == 'checkin',
+            Transaction.created_at >= start_of_week,
+            Transaction.created_at < end_of_week
+        ).all()
+        
+        daily_counts = [0] * 7
+        for tx in txs:
+            daily_counts[tx.created_at.weekday()] += 1
+            
+        return jsonify({
+            'labels': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            'data': daily_counts,
+            'start': start_of_week.strftime('%Y-%m-%d'),
+            'end': (end_of_week - timedelta(days=1)).strftime('%Y-%m-%d')
+        })
+    
+    return jsonify({'error': 'Invalid interval'}), 400
 
 @app.route('/api/recharge', methods=['POST'])
 def recharge():
