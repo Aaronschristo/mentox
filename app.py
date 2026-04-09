@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from flask import Flask, render_template, request, jsonify, send_file, make_response
 from sqlalchemy import func
 from sqlalchemy.orm import joinedload
-from models import db, Customer, Transaction
+from models import db, Customer, Transaction, get_ist_time
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///playarea.db'
@@ -159,7 +159,7 @@ def get_analytics():
     target_date_str = request.args.get('date')
 
     if not target_date_str:
-        target_date = datetime.utcnow()
+        target_date = get_ist_time()
     else:
         try:
             target_date = datetime.strptime(target_date_str, '%Y-%m-%d')
@@ -182,7 +182,7 @@ def get_analytics():
 
         hourly_counts = [0] * 24
         for row in results:
-            hourly_counts[int(row.hour)] += 1
+            hourly_counts[int(row.hour)] += row.count
 
         return jsonify({
             'labels': [f'{h:02d}:00' for h in range(24)],
@@ -211,7 +211,7 @@ def get_analytics():
             # Convert SQLite weekday (0=Sun..6=Sat) → Python weekday (0=Mon..6=Sun)
             sqlite_day = int(row.weekday)
             python_day = (sqlite_day - 1) % 7
-            daily_counts[python_day] += 1
+            daily_counts[python_day] += row.count
 
         return jsonify({
             'labels': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
