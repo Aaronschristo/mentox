@@ -1,19 +1,41 @@
 import os
 import io
+import functools
 import qrcode
 from datetime import datetime, timedelta
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify, send_file, make_response
+from sqlalchemy import func
+from sqlalchemy.orm import joinedload
 from models import db, Customer, Transaction
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///playarea.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000  # 1 year cache for versioned static assets
 
 db.init_app(app)
 CHECKIN_FEE = 100.0
 
 with app.app_context():
     db.create_all()
+
+# --- QR Code In-Memory Cache ---
+# QR content for a given customer ID never changes, so we generate once and cache forever.
+@functools.lru_cache(maxsize=512)
+def _generate_qr_png(customer_id: str) -> bytes:
+    """Generate a QR code PNG. Cached per customer_id — only computed once."""
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(customer_id)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    buf = io.BytesIO()
+    img.save(buf, 'PNG')
+    return buf.getvalue()
 
 @app.route('/')
 def dashboard():
@@ -40,10 +62,18 @@ def analytics_page():
 @app.route('/api/stats', methods=['GET'])
 def get_stats():
     total_customers = Customer.query.count()
-    total_revenue = db.session.query(db.func.sum(Transaction.amount)).filter_by(type='checkin').scalar() or 0.0
-    recent_transactions = Transaction.query.order_by(Transaction.created_at.desc()).limit(10).all()
-    
-    return jsonify({
+    total_revenue = db.session.query(func.sum(Transaction.amount)).filter_by(type='checkin').scalar() or 0.0
+
+    # Fix: joinedload fetches all customer names in a single JOIN — eliminates N+1 queries
+    recent_transactions = (
+        Transaction.query
+        .options(joinedload(Transaction.customer))
+        .order_by(Transaction.created_at.desc())
+        .limit(10)
+        .all()
+    )
+
+    resp = make_response(jsonify({
         'total_customers': total_customers,
         'total_revenue': abs(total_revenue),
         'recent_transactions': [{
@@ -53,7 +83,9 @@ def get_stats():
             'type': t.type,
             'created_at': t.created_at.strftime('%Y-%m-%d %H:%M:%S')
         } for t in recent_transactions]
-    })
+    }))
+    resp.headers['Cache-Control'] = 'private, max-age=30'
+    return resp
 
 @app.route('/api/customers', methods=['GET', 'POST'])
 def manage_customers():
@@ -65,47 +97,47 @@ def manage_customers():
             'balance': c.balance,
             'created_at': c.created_at.strftime('%Y-%m-%d %H:%M:%S')
         } for c in customers])
-    
+
     if request.method == 'POST':
         data = request.json
         name = data.get('name')
         initial_balance = float(data.get('initial_balance', 0.0))
         qr_id = data.get('qr_id')
-        
+
         if not name:
             return jsonify({'error': 'Name is required'}), 400
-            
+
         if initial_balance < 0:
             return jsonify({'error': 'Initial balance cannot be negative'}), 400
-            
+
         if qr_id:
-            # Check if this QR ID already exists
-            existing = Customer.query.get(qr_id)
+            # Fix: db.session.get() — SQLAlchemy 2.x native API (checks identity map first)
+            existing = db.session.get(Customer, qr_id)
             if existing:
                 return jsonify({'error': 'This QR Code is already assigned to a customer.'}), 400
             new_customer = Customer(id=qr_id, name=name, balance=initial_balance)
         else:
             new_customer = Customer(name=name, balance=initial_balance)
-            
+
         db.session.add(new_customer)
         if initial_balance > 0:
-            db.session.flush() # Get the ID
+            db.session.flush()  # Get the ID
             initial_tx = Transaction(customer_id=new_customer.id, amount=initial_balance, type='recharge')
             db.session.add(initial_tx)
-            
+
         db.session.commit()
         return jsonify({'message': 'Customer created successfully', 'id': new_customer.id}), 201
 
 @app.route('/api/customers/<customer_id>', methods=['DELETE'])
 def delete_customer(customer_id):
-    customer = Customer.query.get(customer_id)
+    customer = db.session.get(Customer, customer_id)  # Fix: SQLAlchemy 2.x API
     if not customer:
         return jsonify({'error': 'Customer not found'}), 404
-        
+
     Transaction.query.filter_by(customer_id=customer.id).delete()
     db.session.delete(customer)
     db.session.commit()
-    
+
     return jsonify({'message': 'Customer deleted successfully'}), 200
 
 @app.route('/api/customers/search', methods=['GET'])
@@ -124,8 +156,8 @@ def search_customers():
 @app.route('/api/analytics', methods=['GET'])
 def get_analytics():
     interval = request.args.get('interval', 'hourly')
-    target_date_str = request.args.get('date') 
-    
+    target_date_str = request.args.get('date')
+
     if not target_date_str:
         target_date = datetime.utcnow()
     else:
@@ -137,45 +169,57 @@ def get_analytics():
     if interval == 'hourly':
         start_of_day = target_date.replace(hour=0, minute=0, second=0, microsecond=0)
         end_of_day = start_of_day + timedelta(days=1)
-        
-        txs = Transaction.query.filter(
+
+        # Fix: GROUP BY in the database — returns at most 24 rows instead of all transactions
+        results = db.session.query(
+            func.strftime('%H', Transaction.created_at).label('hour'),
+            func.count(Transaction.id).label('count')
+        ).filter(
             Transaction.type == 'checkin',
             Transaction.created_at >= start_of_day,
             Transaction.created_at < end_of_day
-        ).all()
-        
+        ).group_by('hour').all()
+
         hourly_counts = [0] * 24
-        for tx in txs:
-            hourly_counts[tx.created_at.hour] += 1
-            
+        for row in results:
+            hourly_counts[int(row.hour)] += 1
+
         return jsonify({
             'labels': [f'{h:02d}:00' for h in range(24)],
             'data': hourly_counts,
             'start': start_of_day.strftime('%Y-%m-%d'),
             'end': start_of_day.strftime('%Y-%m-%d')
         })
-        
+
     elif interval == 'daily':
         start_of_week = target_date.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=target_date.weekday())
         end_of_week = start_of_week + timedelta(days=7)
-        
-        txs = Transaction.query.filter(
+
+        # Fix: GROUP BY in the database — returns at most 7 rows instead of all transactions
+        # SQLite %w: 0=Sunday, 1=Monday, ..., 6=Saturday
+        results = db.session.query(
+            func.strftime('%w', Transaction.created_at).label('weekday'),
+            func.count(Transaction.id).label('count')
+        ).filter(
             Transaction.type == 'checkin',
             Transaction.created_at >= start_of_week,
             Transaction.created_at < end_of_week
-        ).all()
-        
+        ).group_by('weekday').all()
+
         daily_counts = [0] * 7
-        for tx in txs:
-            daily_counts[tx.created_at.weekday()] += 1
-            
+        for row in results:
+            # Convert SQLite weekday (0=Sun..6=Sat) → Python weekday (0=Mon..6=Sun)
+            sqlite_day = int(row.weekday)
+            python_day = (sqlite_day - 1) % 7
+            daily_counts[python_day] += 1
+
         return jsonify({
             'labels': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
             'data': daily_counts,
             'start': start_of_week.strftime('%Y-%m-%d'),
             'end': (end_of_week - timedelta(days=1)).strftime('%Y-%m-%d')
         })
-    
+
     return jsonify({'error': 'Invalid interval'}), 400
 
 @app.route('/api/recharge', methods=['POST'])
@@ -183,41 +227,41 @@ def recharge():
     data = request.json
     customer_id = data.get('customer_id')
     amount = float(data.get('amount', 0.0))
-    
+
     if not customer_id or amount <= 0:
         return jsonify({'error': 'Valid customer ID and amount are required'}), 400
-        
-    customer = Customer.query.get(customer_id)
+
+    customer = db.session.get(Customer, customer_id)  # Fix: SQLAlchemy 2.x API
     if not customer:
         return jsonify({'error': 'Customer not found'}), 404
-        
+
     customer.balance += amount
     tx = Transaction(customer_id=customer.id, amount=amount, type='recharge')
     db.session.add(tx)
     db.session.commit()
-    
+
     return jsonify({'message': 'Recharge successful', 'new_balance': customer.balance}), 200
 
 @app.route('/api/checkin', methods=['POST'])
 def checkin():
     data = request.json
     customer_id = data.get('customer_id')
-    
+
     if not customer_id:
         return jsonify({'error': 'Customer ID is required'}), 400
-        
-    customer = Customer.query.get(customer_id)
+
+    customer = db.session.get(Customer, customer_id)  # Fix: SQLAlchemy 2.x API
     if not customer:
         return jsonify({'error': 'Customer not found'}), 404
-        
+
     if customer.balance < CHECKIN_FEE:
-        return jsonify({'error': f'Insufficient balance. Need ${CHECKIN_FEE}, but have ${customer.balance}'}), 400
-        
+        return jsonify({'error': f'Insufficient balance. Need ₹{CHECKIN_FEE}, but have ₹{customer.balance}'}), 400
+
     customer.balance -= CHECKIN_FEE
     tx = Transaction(customer_id=customer.id, amount=-CHECKIN_FEE, type='checkin')
     db.session.add(tx)
     db.session.commit()
-    
+
     return jsonify({
         'message': 'Check-in successful!',
         'customer_name': customer.name,
@@ -226,24 +270,13 @@ def checkin():
 
 @app.route('/qrcode/<customer_id>.png')
 def generate_qr(customer_id):
-    customer = Customer.query.get_or_404(customer_id)
-    
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=10,
-        border=4,
-    )
-    qr.add_data(customer.id)
-    qr.make(fit=True)
+    db.get_or_404(Customer, customer_id)  # 404 if customer doesn't exist
 
-    img = qr.make_image(fill_color="black", back_color="white")
-    
-    img_io = io.BytesIO()
-    img.save(img_io, 'PNG')
-    img_io.seek(0)
-    
-    return send_file(img_io, mimetype='image/png')
+    # Fix: serve from in-memory cache — only generates once per unique customer ID
+    png_bytes = _generate_qr_png(customer_id)
+    response = send_file(io.BytesIO(png_bytes), mimetype='image/png')
+    response.headers['Cache-Control'] = 'public, max-age=86400'  # Browser caches for 24h
+    return response
 
 if __name__ == '__main__':
     from waitress import serve

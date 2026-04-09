@@ -21,3 +21,8 @@ class Transaction(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
 
     customer = db.relationship('Customer', backref=db.backref('transactions', lazy=True, order_by='Transaction.created_at.desc()'))
+
+    # Composite index: analytics queries always filter on both type AND created_at together
+    __table_args__ = (
+        db.Index('ix_tx_type_created', 'type', 'created_at'),
+    )

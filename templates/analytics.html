@@ -133,7 +133,8 @@
     }
 </style>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"></noscript>
 <style>
     /* Custom Flatpickr Glassmorphism Theme */
     .flatpickr-calendar {
@@ -239,8 +240,8 @@
     }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 <script>
     let currentInterval = localStorage.getItem('analytics_interval') || 'hourly';
     let savedDate = localStorage.getItem('analytics_date');
