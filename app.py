@@ -87,10 +87,36 @@ def get_stats():
     resp.headers['Cache-Control'] = 'private, max-age=30'
     return resp
 
+@app.route('/api/transactions', methods=['GET'])
+def get_transactions():
+    offset = request.args.get('offset', 0, type=int)
+    limit = request.args.get('limit', 10, type=int)
+    
+    transactions = (
+        Transaction.query
+        .options(joinedload(Transaction.customer))
+        .order_by(Transaction.created_at.desc())
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
+    
+    resp = make_response(jsonify([{
+        'id': t.id,
+        'customer_name': t.customer.name,
+        'amount': abs(t.amount),
+        'type': t.type,
+        'created_at': t.created_at.strftime('%Y-%m-%d %H:%M:%S')
+    } for t in transactions]))
+    resp.headers['Cache-Control'] = 'private, max-age=30'
+    return resp
+
 @app.route('/api/customers', methods=['GET', 'POST'])
 def manage_customers():
     if request.method == 'GET':
-        customers = Customer.query.order_by(Customer.created_at.desc()).limit(100).all()
+        offset = request.args.get('offset', 0, type=int)
+        limit = request.args.get('limit', 10, type=int)
+        customers = Customer.query.order_by(Customer.created_at.desc()).offset(offset).limit(limit).all()
         return jsonify([{
             'id': c.id,
             'name': c.name,
@@ -143,9 +169,11 @@ def delete_customer(customer_id):
 @app.route('/api/customers/search', methods=['GET'])
 def search_customers():
     q = request.args.get('q', '').strip()
+    offset = request.args.get('offset', 0, type=int)
+    limit = request.args.get('limit', 10, type=int)
     if not q:
         return jsonify([])
-    customers = Customer.query.filter(Customer.name.ilike(f'%{q}%')).order_by(Customer.created_at.desc()).limit(15).all()
+    customers = Customer.query.filter(Customer.name.ilike(f'%{q}%')).order_by(Customer.created_at.desc()).offset(offset).limit(limit).all()
     return jsonify([{
         'id': c.id,
         'name': c.name,
@@ -279,7 +307,7 @@ def generate_qr(customer_id):
     return response
 
 if __name__ == '__main__':
-    from waitress import serve
-    serve(app, host='0.0.0.0', port=5000)
+    # from waitress import serve
+    # serve(app, host='0.0.0.0', port=5000)
 
-    # app.run(debug=True)
+    app.run(debug=True)

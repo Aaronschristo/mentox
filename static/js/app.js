@@ -276,9 +276,96 @@ function loadDashboardStats() {
                     `;
                 });
                 tbody.innerHTML = htmlRows;
+                window.transactionOffset = 10;
+                setupInfiniteScroll();
             }
         })
         .catch(err => console.error("Could not load stats", err));
+}
+
+let dashboardObserver = null;
+
+function setupInfiniteScroll() {
+    const sentinel = document.getElementById('loading-more-transactions');
+    if (!sentinel) return;
+
+    if (dashboardObserver) dashboardObserver.disconnect();
+    
+    sentinel.innerHTML = "<i class='bx bx-loader-alt bx-spin' style='font-size: 20px; vertical-align: middle;'></i> Loading older transactions...";
+    sentinel.style.display = 'block';
+    sentinel.style.opacity = '0';
+    
+    window.isLoadingMore = false;
+    window.hasMoreTransactions = true;
+
+    dashboardObserver = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && !window.isLoadingMore && window.hasMoreTransactions) {
+            loadMoreTransactions();
+        }
+    }, { rootMargin: '150px' });
+
+    dashboardObserver.observe(sentinel);
+}
+
+function loadMoreTransactions() {
+    window.isLoadingMore = true;
+    const sentinel = document.getElementById('loading-more-transactions');
+    sentinel.style.display = 'block';
+    sentinel.style.opacity = '1';
+
+    fetch(`/api/transactions?offset=${window.transactionOffset}&limit=10`)
+        .then(res => res.json())
+        .then(txs => {
+            if (txs.length === 0) {
+                window.hasMoreTransactions = false;
+                sentinel.innerHTML = "<span style='font-size: 13px; opacity: 0.7;'>No more transactions</span>";
+                return;
+            }
+            
+            let htmlRows = '';
+            txs.forEach(tx => {
+                const isCheckin = tx.type === 'checkin';
+                const badgeClass = tx.type;
+                const amountDisplay = isCheckin ? `-₹${tx.amount.toFixed(2)}` : `+₹${tx.amount.toFixed(2)}`;
+                const amountColor = isCheckin ? 'var(--text-dark)' : 'var(--success)';
+                const icon = isCheckin ? 'bx-up-arrow-alt' : 'bx-down-arrow-alt';
+                const iconColor = isCheckin ? 'var(--danger)' : 'var(--success)';
+                htmlRows += `
+                    <tr class="table-row">
+                        <td data-label="Customer Name">
+                            <div class="user-info">
+                                <strong>${escapeHTML(tx.customer_name)}</strong>
+                            </div>
+                        </td>
+                        <td data-label="Type"><span class="badge ${badgeClass}">${tx.type}</span></td>
+                        <td data-label="Amount" style="font-weight:600; color: ${amountColor};">
+                            <div style="display:flex; align-items:center; gap: 4px; justify-content: flex-end;">
+                                <i class='bx ${icon}' style="color: ${iconColor}; font-size: 18px;"></i>
+                                ${amountDisplay}
+                            </div>
+                        </td>
+                        <td data-label="Date" class="text-light">${tx.created_at}</td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('transactions-table-body').insertAdjacentHTML('beforeend', htmlRows);
+            window.transactionOffset += txs.length;
+            window.isLoadingMore = false;
+            
+            if (txs.length < 10) {
+                window.hasMoreTransactions = false;
+                sentinel.style.opacity = '1';
+                sentinel.innerHTML = "<span style='font-size: 13px; opacity: 0.7;'>No more transactions</span>";
+            } else {
+                sentinel.style.opacity = '0';
+            }
+        })
+        .catch(err => {
+            console.error("Could not load more transactions", err);
+            window.isLoadingMore = false;
+            sentinel.style.opacity = '0';
+        });
 }
 
 function loadCustomers(query = '') {
@@ -318,7 +405,99 @@ function loadCustomers(query = '') {
                     `;
                 });
                 tbody.innerHTML = htmlRows;
+                window.customerOffset = 10;
+                window.currentCustomerQuery = query;
+                setupCustomersInfiniteScroll();
             }
+        });
+}
+
+let customersObserver = null;
+
+function setupCustomersInfiniteScroll() {
+    const sentinel = document.getElementById('loading-more-customers');
+    if (!sentinel) return;
+
+    if (customersObserver) customersObserver.disconnect();
+    
+    sentinel.innerHTML = "<i class='bx bx-loader-alt bx-spin' style='font-size: 20px; vertical-align: middle;'></i> Loading older customers...";
+    sentinel.style.display = 'block';
+    sentinel.style.opacity = '0';
+    
+    window.isLoadingMoreCustomers = false;
+    window.hasMoreCustomers = true;
+
+    customersObserver = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && !window.isLoadingMoreCustomers && window.hasMoreCustomers) {
+            loadMoreCustomers();
+        }
+    }, { rootMargin: '150px' });
+
+    customersObserver.observe(sentinel);
+}
+
+function loadMoreCustomers() {
+    window.isLoadingMoreCustomers = true;
+    const sentinel = document.getElementById('loading-more-customers');
+    sentinel.style.display = 'block';
+    sentinel.style.opacity = '1';
+
+    const url = window.currentCustomerQuery 
+        ? `/api/customers/search?q=${encodeURIComponent(window.currentCustomerQuery)}&offset=${window.customerOffset}&limit=10` 
+        : `/api/customers?offset=${window.customerOffset}&limit=10`;
+
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            if (data.length === 0) {
+                window.hasMoreCustomers = false;
+                sentinel.style.opacity = '1';
+                sentinel.innerHTML = "<span style='font-size: 13px; opacity: 0.7;'>No more customers</span>";
+                return;
+            }
+            
+            let htmlRows = '';
+            data.forEach(c => {
+                htmlRows += `
+                    <tr class="table-row">
+                        <td data-label="Name">
+                            <div class="user-info">
+                                <strong>${escapeHTML(c.name)}</strong>
+                                <span class="user-id-truncate" title="${escapeHTML(c.id)}">${escapeHTML(c.id)}</span>
+                            </div>
+                        </td>
+                        <td data-label="Balance" style="font-weight:600; color:var(--text-dark)">${formatCurrency(c.balance)}</td>
+                        <td data-label="Registered" class="text-light">${c.created_at}</td>
+                        <td data-label="Action">
+                            <div style="display:flex; gap: 8px; justify-content: flex-end;">
+                                <button class="btn btn-amount" style="padding: 6px 12px; font-size: 13px;" onclick="showQR('${escapeHTML(c.id)}', '${escapeHTML(c.name)}')">
+                                    <i class='bx bx-qr'></i> View
+                                </button>
+                                <button class="btn btn-danger-soft" style="padding: 6px 12px; font-size: 13px;" onclick="deleteCustomer('${escapeHTML(c.id)}', '${escapeHTML(c.name)}')">
+                                    <i class='bx bx-trash'></i> Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('customers-table-body').insertAdjacentHTML('beforeend', htmlRows);
+            window.customerOffset += data.length;
+            window.isLoadingMoreCustomers = false;
+            
+            if (data.length < 10) {
+                window.hasMoreCustomers = false;
+                sentinel.style.opacity = '1';
+                sentinel.innerHTML = "<span style='font-size: 13px; opacity: 0.7;'>No more customers</span>";
+            } else {
+                sentinel.style.opacity = '0';
+            }
+        })
+        .catch(err => {
+            console.error("Could not load more customers", err);
+            window.isLoadingMoreCustomers = false;
+            sentinel.style.opacity = '0';
         });
 }
 
