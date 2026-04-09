@@ -12,6 +12,8 @@ A premium, fully responsive web application designed for PlayArea businesses to 
 - ⚡ **O(log N) Performance & Rendering Pipelines**: Upgraded internal database querying via native SQLite performance indexes mitigating bottleneck scans. Re-engineered dynamic DOM manipulation to strictly bypass `innerHTML` reflows, instead buffering array matrices actively inside detached `DocumentFragment` instances. Exclusively offloaded all DOM transition repaints to hardware-accelerated GPU layers.
 - 🗑️ **Cascading Deletions**: Provides a persistent, native backend endpoint and UI hook targeting SQLite relations. Automatically unlinks and clears orphaned transactional logs before explicitly purging users.
 - 🔒 **OWASP Network Patches**: Deployed comprehensive global input sanitization (`escapeHTML()`) securely wrapping all user profile mappings. Effectively mitigates arbitrary DOM-based XSS payload scripts traversing the network into client browser environments.
+- 📊 **Business Analytics Engine**: Track check-in transactions dynamically modeled via Chart.js over fluid Glassmorphism canvases. Features complex native sliding toggles scaling bounds automatically to 24-hour sets (Hourly) or 7-day bounds (Daily).
+- 📅 **Custom Date Controllers**: Swapped rudimentary default browser native Date inputs for custom-skinned Flatpickr popups mapping elegantly to CSS Variables across Dark/Light themes alongside custom padding pill aesthetics.
 
 ## 🛠️ Tech Stack
 
@@ -20,6 +22,8 @@ A premium, fully responsive web application designed for PlayArea businesses to 
 - **Libraries**:
   - `qrcode[pil]` (Server-side automatic bitmap QR generation)
   - `html5-qrcode` (Browser-Side Camera feed stream and matrix decoding)
+  - `Chart.js` (Asynchronous HTML5 Canvas dataset rendering loops)
+  - `Flatpickr` (Lightweight responsive Calendar drop-downs)
 
 ## 🚀 Getting Started
 
@@ -84,3 +88,4 @@ If you are running the development server on your PC (`http://192.168.x.x:5000`)
 1. Navigate to the **Customers** page to "Issue New QR" or "Assign Existing QR". Download or capture the QR generated.
 2. Navigate to **Check-in**, allow your browser to use your camera, and wave the QR code in front of the lens. It will verify the customer and pull their entry fee from their balance.
 3. If they run out of money, go to the **Recharge** tab. Type their name to use the autocomplete drop-down, or scan their QR code, enter the top-up amount, and confirm.
+4. Over time, open the **Analytics** page to track bounding check-ins. Flick the pill slider to switch between strict Hourly views versus aggregated Daily blocks. Tap "Pick Date" to securely traverse to any historical record!
