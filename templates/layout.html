@@ -16,14 +16,15 @@
         <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     </noscript>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=1.4">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=1.7">
     <!-- Prevent FOUC: Apply dark mode immediately during parse -->
     <script>
         if (localStorage.getItem('theme') !== 'light') {
             document.documentElement.setAttribute('data-theme', 'dark');
         }
+        window.CURRENCY_SYMBOL = '{{ settings.currency_symbol if settings else "₹" }}';
     </script>
-    <script src="{{ url_for('static', filename='js/app.js') }}?v=1.6" defer></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}?v=1.7" defer></script>
 </head>
 <body class="preload">
     <div class="app-container">
@@ -31,11 +32,17 @@
         <nav class="sidebar">
             <div class="logo-details">
                 <i class='bx bx-game'></i>
-                <span class="logo_name">PlayArea</span>
+                <span class="logo_name">{{ settings.business_name if settings else 'PlayArea' }}</span>
             </div>
             <ul class="nav-links">
                 <li>
                     <a href="/" class="{{ 'active' if request.path == '/' else '' }}">
+                        <i class='bx bx-home'></i>
+                        <span class="links_name">Home</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/dashboard" class="{{ 'active' if request.path == '/dashboard' else '' }}">
                         <i class='bx bx-grid-alt'></i>
                         <span class="links_name">Dashboard</span>
                     </a>
@@ -62,6 +69,12 @@
                     <a href="/analytics" class="{{ 'active' if request.path == '/analytics' else '' }}">
                         <i class='bx bx-bar-chart-alt-2'></i>
                         <span class="links_name">Analytics</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/settings" class="{{ 'active' if request.path == '/settings' else '' }}">
+                        <i class='bx bx-cog'></i>
+                        <span class="links_name">Settings</span>
                     </a>
                 </li>
             </ul>

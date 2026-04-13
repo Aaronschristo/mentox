@@ -75,10 +75,10 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Amount (₹)</label>
+                    <label>Amount ({{ settings.get('currency_symbol', '₹') if settings else '₹' }})</label>
                     <div style="position: relative;">
                         <span
-                            style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-weight: 600;">₹</span>
+                            style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-weight: 600;">{{ settings.get('currency_symbol', '₹') if settings else '₹' }}</span>
                         <input type="number" id="recharge-amount" class="form-input" min="1" step="0.01"
                             style="padding-left: 30px;" required placeholder="0.00">
                     </div>
@@ -86,11 +86,11 @@
 
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px;">
                     <button type="button" class="btn btn-amount"
-                        onclick="document.getElementById('recharge-amount').value='100'">₹100</button>
-                    <button type="button" class="btn btn-amount"
-                        onclick="document.getElementById('recharge-amount').value='500'">₹500</button>
-                    <button type="button" class="btn btn-amount"
-                        onclick="document.getElementById('recharge-amount').value='1000'">₹1000</button>
+                        onclick="document.getElementById('recharge-amount').value='100'">{{ settings.get('currency_symbol', '₹') if settings else '₹' }}100</button>
+                    <button type="button" class="btn btn-amount" 
+                        onclick="document.getElementById('recharge-amount').value='500'">{{ settings.get('currency_symbol', '₹') if settings else '₹' }}500</button>
+                    <button type="button" class="btn btn-amount" 
+                        onclick="document.getElementById('recharge-amount').value='1000'">{{ settings.get('currency_symbol', '₹') if settings else '₹' }}1000</button>
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 18px; padding: 15px;">

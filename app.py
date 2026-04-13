@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from flask import Flask, render_template, request, jsonify, send_file, make_response
 from sqlalchemy import func
 from sqlalchemy.orm import joinedload
-from models import db, Customer, Transaction, get_ist_time
+from models import db, Customer, Transaction, Setting, get_ist_time
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///playarea.db'
@@ -14,10 +14,27 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000  # 1 year cache for versioned static assets
 
 db.init_app(app)
-CHECKIN_FEE = 100.0
 
 with app.app_context():
     db.create_all()
+    
+    defaults = {
+        'checkin_fee': '100.0',
+        'currency_symbol': '₹',
+        'business_name': 'PlayArea Manager'
+    }
+    for k, v in defaults.items():
+        if not db.session.get(Setting, k):
+            db.session.add(Setting(key=k, value=v))
+    db.session.commit()
+
+@app.context_processor
+def inject_settings():
+    try:
+        settings = {s.key: s.value for s in Setting.query.all()}
+        return dict(settings=settings)
+    except:
+        return dict(settings={})
 
 # --- QR Code In-Memory Cache ---
 # QR content for a given customer ID never changes, so we generate once and cache forever.
@@ -38,6 +55,10 @@ def _generate_qr_png(customer_id: str) -> bytes:
     return buf.getvalue()
 
 @app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/dashboard')
 def dashboard():
     return render_template('dashboard.html')
 
@@ -56,6 +77,10 @@ def scan_page():
 @app.route('/analytics')
 def analytics_page():
     return render_template('analytics.html')
+
+@app.route('/settings')
+def settings_page():
+    return render_template('settings.html')
 
 # API Endpoints
 
@@ -291,11 +316,14 @@ def checkin():
     if not customer:
         return jsonify({'error': 'Customer not found'}), 404
 
-    if customer.balance < CHECKIN_FEE:
-        return jsonify({'error': f'Insufficient balance. Need ₹{CHECKIN_FEE}, but have ₹{customer.balance}'}), 400
+    fee_setting = db.session.get(Setting, 'checkin_fee')
+    checkin_fee = float(fee_setting.value) if fee_setting else 100.0
 
-    customer.balance -= CHECKIN_FEE
-    tx = Transaction(customer_id=customer.id, amount=-CHECKIN_FEE, type='checkin')
+    if customer.balance < checkin_fee:
+        return jsonify({'error': f'Insufficient balance. Need {checkin_fee}, but have {customer.balance}'}), 400
+
+    customer.balance -= checkin_fee
+    tx = Transaction(customer_id=customer.id, amount=-checkin_fee, type='checkin')
     db.session.add(tx)
     db.session.commit()
 
@@ -304,6 +332,16 @@ def checkin():
         'customer_name': customer.name,
         'remaining_balance': customer.balance
     }), 200
+
+@app.route('/api/settings', methods=['POST'])
+def save_settings():
+    data = request.json
+    for k, v in data.items():
+        setting = db.session.get(Setting, k)
+        if setting:
+            setting.value = str(v)
+    db.session.commit()
+    return jsonify({'message': 'Settings saved successfully'}), 200
 
 @app.route('/qrcode/<customer_id>.png')
 def generate_qr(customer_id):

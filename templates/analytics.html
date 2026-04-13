@@ -454,7 +454,7 @@
         Chart.defaults.font.family = "'Poppins', sans-serif";
 
         let datasetConfig = {
-            label: currentMetric === 'revenue' ? 'Revenue (₹)' : 'Check-ins',
+            label: currentMetric === 'revenue' ? `Revenue (${window.CURRENCY_SYMBOL || '₹'})` : 'Check-ins',
             data: [],
             backgroundColor: 'rgba(99, 102, 241, 0.2)',
             borderColor: 'rgba(99, 102, 241, 1)',

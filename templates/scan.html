@@ -39,8 +39,8 @@
                     <i class='bx bx-check'></i>
                 </div>
                 <h3 id="success-name">Customer Name</h3>
-                <p id="success-msg" class="highlight-text">Balance: ₹0.00</p>
-                <div class="fee-deducted">-₹100.00 Entry Fee</div>
+                <p id="success-msg" class="highlight-text">Balance: {{ settings.get('currency_symbol', '₹') if settings else '₹' }}0.00</p>
+                <div class="fee-deducted">-{{ settings.get('currency_symbol', '₹') if settings else '₹' }}{{ settings.get('checkin_fee', '100.0') if settings else '100.00' }} Entry Fee</div>
             </div>
         </div>
 
@@ -68,7 +68,7 @@
 
     <div class="fee-info">
         <div class="fee-badge">
-            <i class='bx bx-rupee'></i> 100.00
+            {{ settings.get('currency_symbol', '₹') if settings else '₹' }} {{ settings.get('checkin_fee', '100.0') if settings else '100.00' }}
         </div>
         <span>Standard Entry Fee</span>
     </div>
@@ -201,7 +201,7 @@
                     hideAllOverlays();
                     if (res.status === 200) {
                         document.getElementById("success-name").innerText = res.body.customer_name;
-                        document.getElementById("success-msg").innerText = `Balance: ₹${res.body.remaining_balance.toFixed(2)}`;
+                        document.getElementById("success-msg").innerText = `Balance: ${window.CURRENCY_SYMBOL || '₹'}${res.body.remaining_balance.toFixed(2)}`;
                         overlaySuccess.classList.remove("hidden");
                         
                         showToast(`Success! Checked in ${res.body.customer_name}`, 'success');

@@ -18,7 +18,7 @@
     <div class="glass-card stat-card" style="display: flex; align-items: center; justify-content: space-between;">
         <div>
             <h3 style="color: var(--text-light); font-size: 14px; text-transform: uppercase;">Checkin Revenue</h3>
-            <div class="text-gradient" style="font-size: 36px; font-weight: 700; margin-top: 5px;">₹<span id="total-revenue">0.00</span></div>
+            <div class="text-gradient" style="font-size: 36px; font-weight: 700; margin-top: 5px;">{{ settings.currency_symbol if settings else '₹' }}<span id="total-revenue">0.00</span></div>
         </div>
         <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 12px; color: var(--success);">
             <i class='bx bx-wallet-alt' style="font-size: 32px;"></i>

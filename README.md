@@ -6,6 +6,8 @@ A premium, fully responsive web application designed for PlayArea businesses to 
 
 ## ✨ Premium Features
 
+- 🏠 **Dedicated App Hub Homepage**: A beautiful, isolated standalone entrance hub stripped of unnecessary elements, utilizing responsive glassmorphic cards and dynamic iOS-style "squircle" interactions for rapid staff navigation.
+- ⚙️ **Dynamic Embedded Settings Engine**: Ditch the config files. Customize your business name, currency symbol, and the dynamic entry/check-in fees seamlessly through a gorgeous UI dashboard that syncs instantly across the application database without requiring server restarts.
 - 📱 **Fully Responsive Typography & Layout**: Entire application scales elegantly across desktops, tablets, and mobile phones. Complex data tables magically format themselves into stacked, isolated component cards on small viewports. Navigation menus switch gracefully to off-canvas overlays with dedicated exit mappings.
 - 🎨 **State-of-the-Art Aesthetic**: Built using extensive Glassmorphism, dynamic DOM transitions, and mathematical CSS variables. Customer arrays dynamically generate styled programmatic avatars natively.
 - 📸 **Advanced Hardware Scanner Pipeline**: Features a custom camera feed engine built dynamically over `html5-qrcode`. Implements explicit permission request delays, device enumeration (camera selection dropdowns), smart unified toggle controls, and gorgeous status overlays (Success rings, Loaders) styled uniformly across all pages. 
@@ -91,3 +93,4 @@ If you are running the development server on your PC (`http://192.168.x.x:5000`)
 2. Navigate to **Check-in**, allow your browser to use your camera, and wave the QR code in front of the lens. It will verify the customer and pull their entry fee from their balance.
 3. If they run out of money, go to the **Recharge** tab. Type their name to use the autocomplete drop-down, or scan their QR code, enter the top-up amount, and confirm.
 4. Over time, open the **Analytics** page to track bounding check-ins. Flick the pill slider to switch between strict Hourly views versus aggregated Daily blocks. Tap "Pick Date" to securely traverse to any historical record!
+5. Access the **Settings** menu via the homepage hub or lateral sidebar to dynamically dictate your check-in fee constraints, update currency styles globally, and re-brand your dashboard titles.

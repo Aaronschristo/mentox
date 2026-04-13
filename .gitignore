@@ -49,3 +49,12 @@ instance/
 # Test
 seed_data.py
 test_analytics.py
+
+# Packages & Builds
+build/
+dist/
+*.egg-info/
+
+# Testing
+.pytest_cache/
+htmlcov/

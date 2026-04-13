@@ -30,3 +30,7 @@ class Transaction(db.Model):
     __table_args__ = (
         db.Index('ix_tx_type_created', 'type', 'created_at'),
     )
+
+class Setting(db.Model):
+    key = db.Column(db.String(50), primary_key=True)
+    value = db.Column(db.String(255), nullable=False)

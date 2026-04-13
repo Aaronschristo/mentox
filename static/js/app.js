@@ -53,7 +53,7 @@ function downloadQR() {
 }
 
 // Formatting
-const formatCurrency = (val) => '₹' + parseFloat(val).toFixed(2);
+const formatCurrency = (val) => (window.CURRENCY_SYMBOL || '₹') + parseFloat(val).toFixed(2);
 
 // Theme Toggle
 function toggleTheme() {
@@ -253,7 +253,7 @@ function loadDashboardStats() {
                 data.recent_transactions.forEach(tx => {
                     const isCheckin = tx.type === 'checkin';
                     const badgeClass = tx.type;
-                    const amountDisplay = isCheckin ? `-₹${tx.amount.toFixed(2)}` : `+₹${tx.amount.toFixed(2)}`;
+                    const amountDisplay = isCheckin ? `-${window.CURRENCY_SYMBOL || '₹'}${tx.amount.toFixed(2)}` : `+${window.CURRENCY_SYMBOL || '₹'}${tx.amount.toFixed(2)}`;
                     const amountColor = isCheckin ? 'var(--text-dark)' : 'var(--success)';
                     const icon = isCheckin ? 'bx-up-arrow-alt' : 'bx-down-arrow-alt';
                     const iconColor = isCheckin ? 'var(--danger)' : 'var(--success)';
@@ -326,7 +326,7 @@ function loadMoreTransactions() {
             txs.forEach(tx => {
                 const isCheckin = tx.type === 'checkin';
                 const badgeClass = tx.type;
-                const amountDisplay = isCheckin ? `-₹${tx.amount.toFixed(2)}` : `+₹${tx.amount.toFixed(2)}`;
+                const amountDisplay = isCheckin ? `-${window.CURRENCY_SYMBOL || '₹'}${tx.amount.toFixed(2)}` : `+${window.CURRENCY_SYMBOL || '₹'}${tx.amount.toFixed(2)}`;
                 const amountColor = isCheckin ? 'var(--text-dark)' : 'var(--success)';
                 const icon = isCheckin ? 'bx-up-arrow-alt' : 'bx-down-arrow-alt';
                 const iconColor = isCheckin ? 'var(--danger)' : 'var(--success)';
@@ -601,4 +601,37 @@ function deleteCustomer(id, name) {
             showToast('System Error', 'error');
         });
     }
+}
+
+function handleSaveSettings(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = `<i class='bx bx-loader-alt bx-spin'></i> Saving...`;
+    
+    const data = {
+        business_name: document.getElementById('business_name').value.trim(),
+        checkin_fee: document.getElementById('checkin_fee').value.trim(),
+        currency_symbol: document.getElementById('currency_symbol').value.trim()
+    };
+    
+    fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json().then(d => ({status: res.status, body: d})))
+    .then(res => {
+        btn.innerHTML = originalText;
+        if(res.status === 200) {
+            showToast('Settings saved successfully! Refreshing to apply changes...', 'success');
+            setTimeout(() => window.location.reload(), 1500);
+        } else {
+            showToast(res.body.error || 'Failed to save settings', 'error');
+        }
+    })
+    .catch(err => {
+        btn.innerHTML = originalText;
+        showToast('System Error', 'error');
+    });
 }
