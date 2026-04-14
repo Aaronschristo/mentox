@@ -14,11 +14,11 @@ venv.bak/
 playarea.db
 playarea.db-shm
 playarea.db-wal
+*.sqlite
 *.sqlite3
 *.db
 *.db-shm
 *.db-wal
-
 # Logging
 *.log
 *.log.*
@@ -62,5 +62,16 @@ htmlcov/
 # Tauri & Node
 node_modules/
 src-tauri/target/
-src-tauri/Cargo.lock
+src-tauri/gen/
+src-tauri/bin/
+src-tauri/*.lock
+src-tauri/.DS_Store
+
+# Icons & Source Images
+/app-icon.png
+/app-icon-square.png
+frontend/img/app-icon.png
+src-tauri/icons/64x64.png
+src-tauri/icons/android/
+src-tauri/icons/ios/
 

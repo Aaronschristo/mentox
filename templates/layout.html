@@ -16,7 +16,7 @@
         <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     </noscript>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=1.7">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=1.8">
     <!-- Prevent FOUC: Apply dark mode immediately during parse -->
     <script>
         if (localStorage.getItem('theme') !== 'light') {
@@ -24,14 +24,14 @@
         }
         window.CURRENCY_SYMBOL = '{{ settings.currency_symbol if settings else "₹" }}';
     </script>
-    <script src="{{ url_for('static', filename='js/app.js') }}?v=1.7" defer></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}?v=1.8" defer></script>
 </head>
 <body class="preload">
     <div class="app-container">
         <!-- Sidebar -->
         <nav class="sidebar">
             <div class="logo-details">
-                <i class='bx bx-game'></i>
+                <img src="{{ url_for('static', filename='img/favicon.png') }}" alt="Logo" class="logo-img">
                 <span class="logo_name">{{ settings.business_name if settings else 'PlayArea' }}</span>
             </div>
             <ul class="nav-links">

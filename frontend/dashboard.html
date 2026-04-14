@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - PlayArea Manager</title>
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="icon" type="image/png" href="img/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://unpkg.com">
@@ -13,7 +15,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     </noscript>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=1.1">
     <script>
         if (localStorage.getItem('theme') !== 'light') {
             document.documentElement.setAttribute('data-theme', 'dark');
@@ -21,14 +23,14 @@
         window.CURRENCY_SYMBOL = localStorage.getItem('currency_symbol') || '₹';
     </script>
     <script src="js/config.js"></script>
-    <script src="js/app.js" defer></script>
+    <script src="js/app.js?v=1.1" defer></script>
 </head>
 <body class="preload">
     <div class="app-container">
         <!-- Sidebar -->
         <nav class="sidebar">
             <div class="logo-details">
-                <i class='bx bx-game'></i>
+                <img src="img/favicon.png" alt="Logo" class="logo-img">
                 <span class="logo_name" id="sidebar-business-name">PlayArea</span>
             </div>
             <ul class="nav-links">

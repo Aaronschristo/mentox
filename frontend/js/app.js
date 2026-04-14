@@ -139,8 +139,8 @@ function applySettings(settings) {
     const sidebarName = document.getElementById('sidebar-business-name');
     if (sidebarName) sidebarName.innerText = bizName;
 
-    // Index page hero title
-    const indexTitle = document.getElementById('index-business-name');
+    // Index page hero title — update only the text span, not the whole element (preserves the logo img)
+    const indexTitle = document.getElementById('index-business-name-text');
     if (indexTitle) indexTitle.innerText = bizName;
 
     // Dashboard currency symbol

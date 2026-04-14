@@ -1,109 +1,119 @@
-# Mentox - PlayArea Manager (Tauri Desktop App & Web App)
+# Mentox - PlayArea Manager 
+
+A premium, cross-platform application designed for PlayArea businesses to manage digital customer check-ins, wallet top-ups, and point-of-sale functionality securely using QR code scanning capabilities. Built with **Tauri 2 (Desktop Client)**, **Flask (Python Backend API)**, and **Vanilla Javascript/CSS**.
 
 🌍 **Live Web Demo:** [https://aaronschristo.pythonanywhere.com/](https://aaronschristo.pythonanywhere.com/)
 
-A premium, fully responsive cross-platform application designed for PlayArea businesses to manage digital customer check-ins, top-ups, and point-of-sale functionality using QR code scanning capabilities. 
-Built with **Tauri 2 (Rust Desktop Client)**, **Flask (Python Backend API)**, and **Vanilla Javascript/CSS**.
+---
 
-## ✨ Premium Features
+## 🛠️ System Architecture
 
-- 🏠 **Dedicated App Hub Homepage**: A beautiful, isolated standalone entrance hub stripped of unnecessary elements, utilizing responsive glassmorphic cards and dynamic iOS-style "squircle" interactions for rapid staff navigation.
-- ⚙️ **Dynamic Embedded Settings Engine**: Ditch the config files. Customize your business name, currency symbol, and the dynamic entry/check-in fees seamlessly through a gorgeous UI dashboard that syncs instantly across the application database without requiring server restarts.
-- 📱 **Fully Responsive Typography & Layout**: Entire application scales elegantly across desktops, tablets, and mobile phones. Complex data tables magically format themselves into stacked, isolated component cards on small viewports. Navigation menus switch gracefully to off-canvas overlays with dedicated exit mappings.
-- 🎨 **State-of-the-Art Aesthetic**: Built using extensive Glassmorphism, dynamic DOM transitions, and mathematical CSS variables. Customer arrays dynamically generate styled programmatic avatars natively.
-- 📸 **Advanced Hardware Scanner Pipeline**: Features a custom camera feed engine built dynamically over `html5-qrcode`. Implements explicit permission request delays, device enumeration (camera selection dropdowns), smart unified toggle controls, and gorgeous status overlays (Success rings, Loaders) styled uniformly across all pages. 
-- 💳 **Wallet Top-up System**: Select customers via name autocomplete, or scan their QR code to instantly pull up their profile and recharge their balance with quick pre-filled amounts (₹100, ₹500, ₹1000).
-- 🌙 **Flawless Dark Mode Persistence**: Engineered to entirely bypass the structural "Flash of Unstyled Content" (FOUC) bug by parsing and executing local viewport settings actively within the document `<head>` DOM allocation. 
-- ⚡ **O(log N) Performance & Rendering Pipelines**: Upgraded internal database querying via native SQLite performance indexes mitigating bottleneck scans. Re-engineered dynamic DOM manipulation to strictly bypass `innerHTML` reflows, instead buffering array matrices actively inside detached `DocumentFragment` instances. Exclusively offloaded all DOM transition repaints to hardware-accelerated GPU layers.
-- 🗑️ **Cascading Deletions**: Provides a persistent, native backend endpoint and UI hook targeting SQLite relations. Automatically unlinks and clears orphaned transactional logs before explicitly purging users.
-- 🔒 **OWASP Network Patches**: Deployed comprehensive global input sanitization (`escapeHTML()`) securely wrapping all user profile mappings. Effectively mitigates arbitrary DOM-based XSS payload scripts traversing the network into client browser environments.
-- 📊 **Business Analytics Engine**: Track check-in transactions dynamically modeled via Chart.js over fluid Glassmorphism canvases. Features complex native sliding toggles scaling bounds automatically to 24-hour sets (Hourly) or 7-day bounds (Daily).
-- 📅 **Custom Date Controllers**: Swapped rudimentary default browser native Date inputs for custom-skinned Flatpickr popups mapping elegantly to CSS Variables across Dark/Light themes alongside custom padding pill aesthetics.
+Mentox is designed with a decoupled architecture, allowing the frontend to run independently either as a **Desktop Application** or as a **Web Application**, communicating with a centralized **Flask Backend Server**.
 
-## 🛠️ Architecture & Tech Stack
+1. **`app.py` & `/instance`:** The Python Flask backend API and SQLite Database.
+2. **`frontend/`:** Vanilla HTML/CSS/JS containing all pages, styles, and logic.
+3. **`src-tauri/`:** The Rust-based environment that wraps the `frontend/` into a native Desktop executable.
 
-This project uses a unified architecture for both **Web** and **Desktop App**.
-- **`frontend/`**: The single source of truth for the UI (HTML, CSS, JS). Used by both the website and the Tauri desktop app.
-- **`src-tauri/`**: The Rust-based Tauri backend that bundles the `frontend/` into a native executable for Windows/macOS/Linux.
-- **`app.py`**: The Flask remote API server. It also conditionally serves the `frontend/` directory for pure-web access.
+---
 
-**Technologies Used**:
-- **Desktop Subsystem**: Tauri 2 (Rust)
-- **Backend**: Python 3.8+, Flask, Flask-SQLAlchemy (SQLite3), Flask-Cors
-- **Frontend**: Single-Page App (SPA) architecture via Vanilla HTML5/CSS3/JS, `config.js` for dynamic remote endpoint routing.
-- **Libraries**:
-  - `html5-qrcode` (Browser-Side Camera feed stream and matrix decoding)
-  - `Chart.js` (Asynchronous HTML5 Canvas dataset rendering loops)
-  - `Flatpickr` (Lightweight responsive Calendar drop-downs)
+## 🚀 Setting Up the Backend Server
 
-## 🚀 Getting Started
+The backend powers the entire database operations and API for Mentox. You must run this server for the app to work locally.
 
-### Prerequisites
-- [Python 3.8+](https://www.python.org/downloads/)
-- [Node.js (for Tauri CLI)](https://nodejs.org/)
-- [Rust & MSVC C++ Build Tools](https://tauri.app/v1/guides/getting-started/prerequisites)
+### 1. Prerequisites
+- [Python 3.8+](https://www.python.org/downloads/) installed on your machine.
 
-### 1. Backend API (Flask) Setup
+### 2. Installation Steps
+Open your terminal in the `mentox` project directory:
 
-1. **Clone the repository** and open a terminal in the project directory:
-   ```bash
-   cd mentox
-   ```
+```bash
+# 1. Create a virtual environment
+python -m venv venv
 
-2. **Set up the virtual environment:**
-   ```bash
-   python -m venv venv
-   ```
+# 2. Activate the virtual environment
+# On Windows:
+.\venv\Scripts\activate
+# On macOS / Linux:
+source venv/bin/activate
 
-3. **Activate the virtual environment:**
-   - **Windows:** `.\venv\Scripts\activate`
-   - **macOS / Linux:** `source venv/bin/activate`
+# 3. Install required Python packages
+pip install -r requirements.txt
+```
 
-4. **Install Python dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 3. Run the Server
+Once dependencies are installed, start the backend API:
 
-5. **Start the local backend server:**
-   ```bash
-   python app.py
-   ```
-   *The server runs on `http://127.0.0.1:5000`. By default, the frontend is configured to target a remote production URL.*
+```bash
+python app.py
+```
+> The server will start running at **`http://127.0.0.1:5000`**. Wait until it logs that it is active. The backend is now ready!
 
-### 2. Frontend Configuration & Running the Web App
+---
 
-The target API endpoint is managed globally inside `frontend/js/config.js`. You can toggle between local development and your live production backend here.
+## ⚙️ Configuring the Frontend
 
-To view the raw web app without Tauri, simply launch the backend server above and load `http://127.0.0.1:5000` via your web browser. 
+The frontend needs to know where to send database requests. By default, it might be pointing to the production cloud server. **You need to point it to your local server.**
 
-### 3. Tauri Desktop App Setup
+1. Open `frontend/js/config.js` in your code editor.
+2. Change the `API_BASE` value to point to your local Flask backend:
 
-1. Make sure Node.js and Rust are installed.
-2. In a separate terminal, start the Tauri development window:
+```javascript
+// frontend/js/config.js
+window.APP_CONFIG = {
+    // For Local Development:
+    API_BASE: 'http://127.0.0.1:5000'
+
+    // For Production (Change it back before deployment):
+    // API_BASE: 'https://aaronschristo.pythonanywhere.com'
+};
+```
+
+---
+
+## 💻 Running the Application
+
+You can launch Mentox in either Web Mode or Desktop Mode.
+
+### Option A: Web App Mode (Browser)
+Simply open your web browser and navigate to:
+**`http://127.0.0.1:5000`**
+
+*Since `app.py` is configured to serve the `frontend/` directory, the website will load seamlessly from your local server.*
+
+### Option B: Tauri Desktop Mode (Native App)
+To run Mentox as an actual desktop window using Tauri:
+
+**Requirements:** [Node.js](https://nodejs.org/) and [Rust](https://www.rust-lang.org/tools/install) must be installed.
+
+1. Open a **new** terminal in the `mentox` directory.
+2. Keep your Flask server running in the background.
+3. Launch the Tauri developer app:
    ```bash
    npx @tauri-apps/cli@2 dev
    ```
-   *(Tauri will automatically serve and bundle the `frontend/` directory).*
 
-3. To build a distributable `.exe` or `.msi` Windows installer:
-   ```bash
-   npx @tauri-apps/cli@2 build
-   ```
+*To build a final `.exe` or `.msi` Windows installer for distribution, run:*
+```bash
+npx @tauri-apps/cli@2 build
+```
 
-## 📱 Mobile Camera Testing (Local LAN)
+---
 
-If you are running the development server on your PC (`http://192.168.x.x:5000`) and testing the QR scanner on an Android device, modern mobile browsers will strictly **hardware-block** the `getUserMedia` camera API because it is served over unencrypted HTTP.
+## 📱 Local Network Mobile Testing (QR Scanner)
 
-**To bypass this for local development testing:**
+If you are trying to test the exact QR Code scanner on your phone by connecting to your computer's IP (e.g., `http://192.168.1.5:5000`), mobile browsers will strictly block the camera because the site doesn't have an `https://` SSL certificate.
+
+**How to bypass this for local development on Android:**
 1. Open Google Chrome on your Android phone.
-2. Navigate to `chrome://flags/#unsafely-treat-insecure-origin-as-secure`.
-3. Enter your local server URL (e.g., `http://192.168.1.5:5000`) into the text box.
-4. Enable the flag and relaunch the browser. Camera permissions will now successfully prompt!
+2. Navigate to `chrome://flags/#unsafely-treat-insecure-origin-as-secure` in the URL bar.
+3. Type your local IP into the text box (e.g., `http://192.168.1.5:5000`).
+4. Enable the setting and relaunch the browser. Camera permissions will now pop up correctly!
 
-## 📖 Usage Guide
+---
 
-1. Navigate to the **Customers** page to "Issue New QR" or "Assign Existing QR". Download or capture the QR generated.
-2. Navigate to **Check-in**, allow your browser to use your camera, and wave the QR code in front of the lens. It will verify the customer and pull their entry fee from their balance.
-3. If they run out of money, go to the **Recharge** tab. Type their name to use the autocomplete drop-down, or scan their QR code, enter the top-up amount, and confirm.
-4. Over time, open the **Analytics** page to track bounding check-ins. Flick the pill slider to switch between strict Hourly views versus aggregated Daily blocks. Tap "Pick Date" to securely traverse to any historical record!
-5. Access the **Settings** menu via the homepage hub or lateral sidebar to dynamically dictate your check-in fee constraints, update currency styles globally, and re-brand your dashboard titles.
+## 📖 Usage Flow
+1. **Initialize Settings:** Start by going to **Settings**. Set your Business Name and Check-in Fee.
+2. **Issue Customers:** Head to **Customers** to generate QR codes for new profiles.
+3. **Recharge Wallets:** Head to **Recharge** to add money to customer accounts.
+4. **Scan Passes:** Open **Check-in**, point the camera at a QR code, and watch the system automatically debit their wallet.
+5. **Insights:** Track all your revenue through the **Analytics** page. 

@@ -9,10 +9,10 @@ from sqlalchemy import func
 from sqlalchemy.orm import joinedload
 from models import db, Customer, Transaction, Setting, get_ist_time
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='frontend', static_url_path='/static')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///playarea.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000  # 1 year cache for versioned static assets
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # Disable aggressive caching for dev
 
 db.init_app(app)
 CORS(app)  # Allow cross-origin requests from Tauri app and website

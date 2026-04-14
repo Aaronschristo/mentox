@@ -77,6 +77,23 @@ body.preload * {
   color: var(--primary-color);
 }
 
+.logo-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  margin-right: 15px;
+  border-radius: 8px;
+}
+
+.hero-logo-img {
+  width: 48px;
+  height: 48px;
+  vertical-align: middle;
+  margin-right: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
 .nav-links {
   margin-top: 20px;
   list-style: none;

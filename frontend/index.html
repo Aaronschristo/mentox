@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PlayArea Manager</title>
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="icon" type="image/png" href="img/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://unpkg.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=1.1">
     <!-- Prevent FOUC inside HTML -->
     <script>
         if (localStorage.getItem('theme') !== 'light') {
@@ -17,46 +19,62 @@
         }
     </script>
     <script src="js/config.js"></script>
-    <script src="js/app.js" defer></script>
+    <script src="js/app.js?v=1.1" defer></script>
     <style>
         body {
             background-color: var(--secondary-color);
-            min-height: 100vh;
+            height: 100vh;
+            max-height: 100vh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 40px 20px;
+            padding: 15px 20px;
+            gap: 16px;
         }
 
         .hero-title {
-            font-size: 54px;
+            font-size: clamp(20px, 3vw, 36px);
             font-weight: 700;
-            text-align: center;
-            margin-bottom: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 0;
             background: linear-gradient(135deg, var(--primary-color), #a855f7);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: -1px;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));
+            letter-spacing: -0.5px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+            flex-shrink: 0;
+        }
+
+        .hero-logo-img {
+            width: clamp(24px, 3vw, 36px);
+            height: clamp(24px, 3vw, 36px);
+            object-fit: contain;
+            border-radius: 8px;
+            flex-shrink: 0;
         }
 
         .home-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 35px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(10px, 1.5vw, 24px);
             width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: min(1400px, calc(100vw - 40px));
+            flex: 1;
+            min-height: 0;
         }
         
         .home-card {
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
-            border-radius: 28px;
-            padding: 50px 20px;
+            border-radius: 20px;
+            padding: clamp(12px, 2vh, 24px) 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -68,6 +86,7 @@
             position: relative;
             overflow: hidden;
             z-index: 1;
+            min-height: 0;
         }
         
         .home-card::before {
@@ -81,8 +100,8 @@
         }
 
         .home-card:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.1), 0 15px 15px -5px rgba(0, 0, 0, 0.04);
+            transform: translateY(-6px);
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -5px rgba(0, 0, 0, 0.04);
             border-color: var(--primary-color);
             background: var(--white);
         }
@@ -96,33 +115,34 @@
         }
 
         .icon-container {
-            width: 100px;
-            height: 100px;
-            border-radius: 28px;
+            width: clamp(48px, 6vw, 72px);
+            height: clamp(48px, 6vw, 72px);
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 25px;
+            margin-bottom: clamp(8px, 1.2vh, 14px);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             background: rgba(99, 102, 241, 0.1);
+            flex-shrink: 0;
         }
 
         .home-card i {
-            font-size: 54px;
+            font-size: clamp(24px, 3vw, 38px);
             transition: all 0.4s ease;
             color: var(--primary-color);
         }
 
         .home-card span {
-            font-size: 24px;
+            font-size: clamp(13px, 1.4vw, 18px);
             font-weight: 600;
             color: var(--text-dark);
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             transition: color 0.4s ease;
         }
 
         .home-card:hover .icon-container {
-            transform: scale(1.15) translateY(-5px);
+            transform: scale(1.1) translateY(-3px);
         }
 
         .home-card:hover i {
@@ -132,37 +152,37 @@
 
         .card-dashboard .icon-container { background: rgba(236, 72, 153, 0.1); }
         .card-dashboard i { color: #ec4899; }
-        .card-dashboard:hover .icon-container { background: linear-gradient(135deg, #ec4899, #f472b6); box-shadow: 0 15px 25px rgba(236, 72, 153, 0.3); }
+        .card-dashboard:hover .icon-container { background: linear-gradient(135deg, #ec4899, #f472b6); box-shadow: 0 10px 20px rgba(236, 72, 153, 0.3); }
 
         .card-customers .icon-container { background: rgba(59, 130, 246, 0.1); }
         .card-customers i { color: #3b82f6; }
-        .card-customers:hover .icon-container { background: linear-gradient(135deg, #3b82f6, #60a5fa); box-shadow: 0 15px 25px rgba(59, 130, 246, 0.3); }
+        .card-customers:hover .icon-container { background: linear-gradient(135deg, #3b82f6, #60a5fa); box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3); }
 
         .card-recharge .icon-container { background: rgba(16, 185, 129, 0.1); }
         .card-recharge i { color: #10b981; }
-        .card-recharge:hover .icon-container { background: linear-gradient(135deg, #10b981, #34d399); box-shadow: 0 15px 25px rgba(16, 185, 129, 0.3); }
+        .card-recharge:hover .icon-container { background: linear-gradient(135deg, #10b981, #34d399); box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3); }
 
         .card-scan .icon-container { background: rgba(245, 158, 11, 0.1); }
         .card-scan i { color: #f59e0b; }
-        .card-scan:hover .icon-container { background: linear-gradient(135deg, #f59e0b, #fbbf24); box-shadow: 0 15px 25px rgba(245, 158, 11, 0.3); }
+        .card-scan:hover .icon-container { background: linear-gradient(135deg, #f59e0b, #fbbf24); box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3); }
 
         .card-analytics .icon-container { background: rgba(139, 92, 246, 0.1); }
         .card-analytics i { color: #8b5cf6; }
-        .card-analytics:hover .icon-container { background: linear-gradient(135deg, #8b5cf6, #a78bfa); box-shadow: 0 15px 25px rgba(139, 92, 246, 0.3); }
+        .card-analytics:hover .icon-container { background: linear-gradient(135deg, #8b5cf6, #a78bfa); box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3); }
 
         .card-settings .icon-container { background: rgba(100, 116, 139, 0.1); }
         .card-settings i { color: #64748b; }
-        .card-settings:hover .icon-container { background: linear-gradient(135deg, #64748b, #94a3b8); box-shadow: 0 15px 25px rgba(100, 116, 139, 0.3); }
+        .card-settings:hover .icon-container { background: linear-gradient(135deg, #64748b, #94a3b8); box-shadow: 0 10px 20px rgba(100, 116, 139, 0.3); }
 
         .theme-toggle-fab {
             position: fixed; 
-            top: 30px; 
-            right: 30px; 
+            top: 20px; 
+            right: 20px; 
             z-index: 1000; 
             background: var(--glass-bg); 
             backdrop-filter: blur(10px); 
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%; 
             box-shadow: var(--box-shadow); 
             border: 1px solid var(--glass-border); 
@@ -184,45 +204,40 @@
         }
 
         @media (max-width: 768px) {
-            .hero-title {
-                font-size: 32px;
-                margin-bottom: 25px;
-                margin-top: 30px;
-            }
             body {
-                padding: 15px;
-                justify-content: flex-start;
-                padding-top: 30px;
+                height: 100dvh;
+                max-height: 100dvh;
+                padding: 12px 12px;
+                gap: 12px;
+            }
+            .hero-title {
+                font-size: clamp(17px, 5vw, 24px);
+                gap: 8px;
+            }
+            .hero-logo-img {
+                width: clamp(20px, 5vw, 28px);
+                height: clamp(20px, 5vw, 28px);
             }
             .home-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-                padding-bottom: 30px;
+                gap: 10px;
             }
             .home-card {
-                padding: 25px 10px;
-                border-radius: 20px;
-            }
-            .home-card span {
-                font-size: 15px;
-                margin-top: 15px;
-            }
-            .theme-toggle-fab {
-                top: 20px;
-                right: 20px;
-                width: 40px;
-                height: 40px;
-            }
-            .theme-toggle-fab i {
-                font-size: 20px !important;
+                padding: clamp(10px, 2.5vh, 18px) 8px;
+                border-radius: 16px;
             }
             .icon-container {
-                width: 65px;
-                height: 65px;
-                border-radius: 18px;
+                border-radius: 12px;
+                margin-bottom: clamp(6px, 1vh, 10px);
             }
-            .home-card i {
-                font-size: 32px;
+            .theme-toggle-fab {
+                top: 12px;
+                right: 12px;
+                width: 34px;
+                height: 34px;
+            }
+            .theme-toggle-fab i {
+                font-size: 18px !important;
             }
         }
     </style>
@@ -234,7 +249,7 @@
         <i class='bx bx-moon' style="font-size: 24px; color: var(--text-dark);" id="theme-toggle-icon"></i>
     </div>
 
-    <h1 class="hero-title" id="index-business-name">PlayArea Manager</h1>
+    <h1 class="hero-title" id="index-business-name"><img src="img/favicon.png" alt="Logo" class="hero-logo-img"><span id="index-business-name-text">PlayArea Manager</span></h1>
 
     <div class="home-grid">
         <a href="dashboard.html" class="home-card card-dashboard">
