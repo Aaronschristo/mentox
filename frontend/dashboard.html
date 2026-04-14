@@ -21,6 +21,10 @@
             document.documentElement.setAttribute('data-theme', 'dark');
         }
         window.CURRENCY_SYMBOL = localStorage.getItem('currency_symbol') || '₹';
+        const cachedName = localStorage.getItem('business_name') || 'PlayArea Manager';
+        if (document.title.includes('PlayArea Manager')) {
+            document.title = document.title.replace('PlayArea Manager', cachedName);
+        }
     </script>
     <script src="js/config.js"></script>
     <script src="js/app.js?v=1.1" defer></script>
@@ -31,7 +35,8 @@
         <nav class="sidebar">
             <div class="logo-details">
                 <img src="img/favicon.png" alt="Logo" class="logo-img">
-                <span class="logo_name" id="sidebar-business-name">PlayArea</span>
+                <span class="logo_name" id="sidebar-business-name"></span>
+                <script>document.getElementById('sidebar-business-name').innerText = localStorage.getItem('business_name') || 'PlayArea Manager';</script>
             </div>
             <ul class="nav-links">
                 <li><a href="index.html" id="nav-home"><i class='bx bx-home'></i><span class="links_name">Home</span></a></li>

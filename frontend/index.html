@@ -17,6 +17,10 @@
         if (localStorage.getItem('theme') !== 'light') {
             document.documentElement.setAttribute('data-theme', 'dark');
         }
+        const cachedName = localStorage.getItem('business_name') || 'PlayArea Manager';
+        if (document.title.includes('PlayArea Manager')) {
+            document.title = document.title.replace('PlayArea Manager', cachedName);
+        }
     </script>
     <script src="js/config.js"></script>
     <script src="js/app.js?v=1.1" defer></script>
@@ -249,7 +253,8 @@
         <i class='bx bx-moon' style="font-size: 24px; color: var(--text-dark);" id="theme-toggle-icon"></i>
     </div>
 
-    <h1 class="hero-title" id="index-business-name"><img src="img/favicon.png" alt="Logo" class="hero-logo-img"><span id="index-business-name-text">PlayArea Manager</span></h1>
+    <h1 class="hero-title" id="index-business-name"><img src="img/favicon.png" alt="Logo" class="hero-logo-img"><span id="index-business-name-text"></span></h1>
+    <script>document.getElementById('index-business-name-text').innerText = localStorage.getItem('business_name') || 'PlayArea Manager';</script>
 
     <div class="home-grid">
         <a href="dashboard.html" class="home-card card-dashboard">

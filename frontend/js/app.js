@@ -188,13 +188,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if(savedTheme !== 'light' && icon) {
         icon.className = 'bx bx-sun';
     }
-
-    // Set active nav
-    initNavActiveState();
-
-    // Load settings
-    initSettings();
 });
+
+// Set active nav
+initNavActiveState();
+
+// Load settings
+initSettings();
 
 // Global customers cache for autocomplete
 window.allCustomers = [];
