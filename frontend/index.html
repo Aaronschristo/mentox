@@ -207,6 +207,35 @@
             background: rgba(30, 41, 59, 1);
         }
 
+        .download-fab {
+            position: fixed;
+            top: 20px;
+            right: 70px;
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--glass-border);
+            display: none; /* Hidden by default, shown via JS */
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .download-fab:hover {
+            transform: scale(1.1);
+            background: var(--white);
+            border-color: var(--primary-color);
+        }
+
+        [data-theme="dark"] .download-fab:hover {
+            background: rgba(30, 41, 59, 1);
+        }
+
         @media (max-width: 768px) {
             body {
                 height: 100dvh;
@@ -243,6 +272,17 @@
             .theme-toggle-fab i {
                 font-size: 18px !important;
             }
+
+            .download-fab {
+                top: 12px;
+                right: 56px;
+                width: 34px;
+                height: 34px;
+            }
+
+            .download-fab i {
+                font-size: 18px !important;
+            }
         }
     </style>
 </head>
@@ -251,6 +291,11 @@
     <!-- Floating Dark Mode Toggle -->
     <div class="theme-toggle-fab" onclick="toggleTheme()">
         <i class='bx bx-moon' style="font-size: 24px; color: var(--text-dark);" id="theme-toggle-icon"></i>
+    </div>
+
+    <!-- Floating Download Windows App (Venuity) -->
+    <div class="download-fab" id="windows-download-btn" onclick="handleDownloadLatest()" title="Download Venuity for Windows">
+        <i class='bx bxl-windows' style="font-size: 24px; color: var(--text-dark);"></i>
     </div>
 
     <h1 class="hero-title" id="index-business-name"><img src="img/favicon.png" alt="Logo" class="hero-logo-img"><span id="index-business-name-text"></span></h1>

@@ -90,7 +90,35 @@ def settings_page():
 def serve_static(filename):
     return send_from_directory('frontend', filename)
 
+# Serve files from the downloads folder
+@app.route('/downloads/<path:filename>')
+def serve_download(filename):
+    return send_from_directory('downloads', filename)
+
 # API Endpoints
+
+@app.route('/api/latest_installer', methods=['GET'])
+def get_latest_installer():
+    downloads_dir = 'downloads'
+    if not os.path.exists(downloads_dir):
+        return jsonify({'error': 'No downloads available'}), 404
+        
+    # Find all Venuity installers (.exe prioritised)
+    files = [f for f in os.listdir(downloads_dir) if f.startswith('Venuity') and f.endswith(('.exe', '.msi'))]
+    
+    if not files:
+        return jsonify({'error': 'No installers found'}), 404
+        
+    # Sort descending to get the latest version (e.g., 1.1.0 > 1.0.9)
+    # This works for standard versioning strings
+    files.sort(reverse=True)
+    
+    latest_file = files[0]
+    return jsonify({
+        'filename': latest_file,
+        'url': f'/downloads/{latest_file}',
+        'version': latest_file.split('_')[1] if '_' in latest_file else 'unknown'
+    })
 
 @app.route('/api/stats', methods=['GET'])
 def get_stats():

@@ -1,15 +1,15 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Mentox",
+  "productName": "Venuity",
   "version": "1.0.0",
-  "identifier": "com.mentox.playarea",
+  "identifier": "com.venuity.playarea",
   "build": {
     "frontendDist": "../frontend"
   },
   "app": {
     "windows": [
       {
-        "title": "Mentox - PlayArea Manager",
+        "title": "Venuity - PlayArea Manager",
         "width": 1280,
         "height": 800,
         "minWidth": 900,

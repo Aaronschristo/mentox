@@ -1,5 +1,5 @@
 // =====================================================================
-// Mentox app.js — Static frontend version
+// Venuity app.js — Static frontend version
 // All fetch() calls use window.APP_CONFIG.API_BASE (set in config.js)
 // =====================================================================
 
@@ -749,3 +749,62 @@ function handleSaveSettings(e) {
         showToast('System Error', 'error');
     });
 }
+
+// -------------------------------------------------------
+// Dynamic Windows Download Logic (Venuity)
+// -------------------------------------------------------
+
+function handleDownloadLatest() {
+    const btn = document.getElementById('windows-download-btn');
+    const icon = btn.querySelector('i');
+    const originalIcon = icon.className;
+    
+    // Simple loading feedback
+    icon.className = 'bx bx-loader-alt bx-spin';
+    
+    fetch(`${API()}/api/latest_installer`)
+        .then(res => {
+            if (!res.ok) throw new Error('No installer available');
+            return res.json();
+        })
+        .then(data => {
+            if (data.url) {
+                // Trigger download
+                const link = document.createElement('a');
+                link.href = `${API()}${data.url}`;
+                link.download = data.filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showToast(`Downloading Venuity ${data.version}...`);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            showToast('Installer not available yet', 'error');
+        })
+        .finally(() => {
+            icon.className = originalIcon;
+        });
+}
+
+/**
+ * Detects if the user is on Windows and visiting via a browser (not Tauri app).
+ */
+function initDownloadButton() {
+    const isWindows = navigator.userAgent.indexOf('Win') !== -1;
+    const isTauri = !!window.__TAURI_INTERNALS__;
+    const isHomePage = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/mentox/frontend/') || window.location.pathname.endsWith('/frontend/');
+    
+    const downloadBtn = document.getElementById('windows-download-btn');
+    if (downloadBtn) {
+        if (isWindows && !isTauri && isHomePage) {
+            downloadBtn.style.display = 'flex';
+        } else {
+            downloadBtn.style.display = 'none';
+        }
+    }
+}
+
+// Run on load
+document.addEventListener('DOMContentLoaded', initDownloadButton);

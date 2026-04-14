@@ -1,4 +1,4 @@
-# Mentox - PlayArea Manager 
+# Venuity - PlayArea Manager 
 
 A premium, cross-platform application designed for PlayArea businesses to manage digital customer check-ins, wallet top-ups, and point-of-sale functionality securely using QR code scanning capabilities. Built with **Tauri 2 (Desktop Client)**, **Flask (Python Backend API)**, and **Vanilla Javascript/CSS**.
 
@@ -8,7 +8,7 @@ A premium, cross-platform application designed for PlayArea businesses to manage
 
 ## 🛠️ System Architecture
 
-Mentox is designed with a decoupled architecture, allowing the frontend to run independently either as a **Desktop Application** or as a **Web Application**, communicating with a centralized **Flask Backend Server**.
+Venuity is designed with a decoupled architecture, allowing the frontend to run independently either as a **Desktop Application** or as a **Web Application**, communicating with a centralized **Flask Backend Server**.
 
 1. **`app.py` & `/instance`:** The Python Flask backend API and SQLite Database.
 2. **`frontend/`:** Vanilla HTML/CSS/JS containing all pages, styles, and logic.
@@ -18,13 +18,13 @@ Mentox is designed with a decoupled architecture, allowing the frontend to run i
 
 ## 🚀 Setting Up the Backend Server
 
-The backend powers the entire database operations and API for Mentox. You must run this server for the app to work locally.
+The backend powers the entire database operations and API for Venuity. You must run this server for the app to work locally.
 
 ### 1. Prerequisites
 - [Python 3.8+](https://www.python.org/downloads/) installed on your machine.
 
 ### 2. Installation Steps
-Open your terminal in the `mentox` project directory:
+Open your terminal in the `venuity` project directory:
 
 ```bash
 # 1. Create a virtual environment
@@ -72,7 +72,7 @@ window.APP_CONFIG = {
 
 ## 💻 Running the Application
 
-You can launch Mentox in either Web Mode or Desktop Mode.
+You can launch Venuity in either Web Mode or Desktop Mode.
 
 ### Option A: Web App Mode (Browser)
 Simply open your web browser and navigate to:
@@ -81,11 +81,11 @@ Simply open your web browser and navigate to:
 *Since `app.py` is configured to serve the `frontend/` directory, the website will load seamlessly from your local server.*
 
 ### Option B: Tauri Desktop Mode (Native App)
-To run Mentox as an actual desktop window using Tauri:
+To run Venuity as an actual desktop window using Tauri:
 
 **Requirements:** [Node.js](https://nodejs.org/) and [Rust](https://www.rust-lang.org/tools/install) must be installed.
 
-1. Open a **new** terminal in the `mentox` directory.
+1. Open a **new** terminal in the `venuity` directory.
 2. Keep your Flask server running in the background.
 3. Launch the Tauri developer app:
    ```bash
