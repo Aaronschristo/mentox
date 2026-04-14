@@ -23,7 +23,7 @@ with app.app_context():
     defaults = {
         'checkin_fee': '100.0',
         'currency_symbol': '₹',
-        'business_name': 'PlayArea Manager'
+        'business_name': 'Venuity'
     }
     for k, v in defaults.items():
         if not db.session.get(Setting, k):

@@ -794,7 +794,7 @@ function handleDownloadLatest() {
 function initDownloadButton() {
     const isWindows = navigator.userAgent.indexOf('Win') !== -1;
     const isTauri = !!window.__TAURI_INTERNALS__;
-    const isHomePage = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/mentox/frontend/') || window.location.pathname.endsWith('/frontend/');
+    const isHomePage = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/venuity/frontend/') || window.location.pathname.endsWith('/frontend/');
     
     const downloadBtn = document.getElementById('windows-download-btn');
     if (downloadBtn) {
