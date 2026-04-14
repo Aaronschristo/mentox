@@ -70,60 +70,64 @@
         <p class="subtitle">Quick, frictionless entry for your customers.</p>
     </div>
 
-    <div class="scanner-wrapper">
-        <div id="reader"></div>
+    <div class="scanner-layout-grid">
+        <div class="scanner-wrapper">
+            <div id="reader"></div>
 
-        <div id="scanner-placeholder" class="scanner-overlay active">
-            <div class="overlay-content">
-                <div class="icon-circle primary">
-                    <i class='bx bx-camera'></i>
+            <div id="scanner-placeholder" class="scanner-overlay active">
+                <div class="overlay-content">
+                    <div class="icon-circle primary" style="pointer-events: none;">
+                        <i class='bx bx-camera'></i>
+                    </div>
+                    <h3 style="pointer-events: none;">Camera Inactive</h3>
+                    <p style="pointer-events: none;">Click to begin scanning QR codes.</p>
                 </div>
-                <h3>Camera Inactive</h3>
-                <p>Click "Start Scanner" to begin scanning QR codes.</p>
             </div>
-        </div>
 
-        <div id="scanner-loading" class="scanner-overlay hidden">
-            <div class="overlay-content">
-                <i class='bx bx-loader-alt bx-spin loading-icon'></i>
-                <h3 id="loading-text">Initializing Camera...</h3>
-            </div>
-        </div>
-
-        <div id="scan-success-overlay" class="scanner-overlay success-overlay hidden">
-            <div class="overlay-content">
-                <div class="icon-circle success pulse">
-                    <i class='bx bx-check'></i>
+            <div id="scanner-loading" class="scanner-overlay hidden">
+                <div class="overlay-content">
+                    <i class='bx bx-loader-alt bx-spin loading-icon'></i>
+                    <h3 id="loading-text">Initializing Camera...</h3>
                 </div>
-                <h3 id="success-name">Customer Name</h3>
-                <p id="success-msg" class="highlight-text">Balance: ₹0.00</p>
-                <div class="fee-deducted" id="fee-deducted-display">-₹100 Entry Fee</div>
             </div>
-        </div>
 
-        <div id="scan-error-overlay" class="scanner-overlay error-overlay hidden">
-            <div class="overlay-content">
-                <div class="icon-circle error shake">
-                    <i class='bx bx-x'></i>
+            <div id="scan-success-overlay" class="scanner-overlay success-overlay hidden">
+                <div class="overlay-content">
+                    <div class="icon-circle success pulse">
+                        <i class='bx bx-check'></i>
+                    </div>
+                    <h3 id="success-name">Customer Name</h3>
+                    <p id="success-msg" class="highlight-text">Balance: ₹0.00</p>
+                    <div class="fee-deducted" id="fee-deducted-display">-₹100 Entry Fee</div>
                 </div>
-                <h3 id="error-title">Check-in Failed</h3>
-                <p id="error-msg">Insufficient funds</p>
+            </div>
+
+            <div id="scan-error-overlay" class="scanner-overlay error-overlay hidden">
+                <div class="overlay-content">
+                    <div class="icon-circle error shake">
+                        <i class='bx bx-x'></i>
+                    </div>
+                    <h3 id="error-title">Check-in Failed</h3>
+                    <p id="error-msg">Insufficient funds</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="scanner-controls" style="flex-direction: column; align-items: center; gap: 15px;">
-        <select id="camera-select" class="form-input" style="max-width: 300px; text-align: center; cursor: pointer; background: var(--glass-bg); color: var(--text-dark); border: 1px solid var(--glass-border);">
-            <option value="">Loading cameras...</option>
-        </select>
-        <button id="btn-toggle" class="btn btn-primary start-btn">
-            <i class='bx bx-play-circle'></i> Start Scanner
-        </button>
-    </div>
+        <div class="scanner-side-panel">
+            <div class="scanner-controls">
+                <select id="camera-select" class="form-input" style="max-width: 300px; text-align: center; cursor: pointer; background: var(--glass-bg); color: var(--text-dark); border: 1px solid var(--glass-border);">
+                    <option value="">Loading cameras...</option>
+                </select>
+                <button id="btn-toggle" class="btn btn-primary start-btn">
+                    <i class='bx bx-play-circle'></i> Start Scanner
+                </button>
+            </div>
 
-    <div class="fee-info">
-        <div class="fee-badge" id="fee-badge-display">₹100</div>
-        <span>Standard Entry Fee</span>
+            <div class="fee-info">
+                <div class="fee-badge" id="fee-badge-display">₹100</div>
+                <span>Standard Entry Fee</span>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -215,6 +219,13 @@
             else { const cameraId = cameraSelect.value; if (cameraId) startScanner(cameraId); }
         });
 
+        overlayPlaceholder.addEventListener("click", () => {
+            if (!isCameraActive && !isProcessing) {
+                const cameraId = cameraSelect.value;
+                if (cameraId) startScanner(cameraId);
+            }
+        });
+
         function onScanSuccess(decodedText, decodedResult) {
             if (isProcessing) return;
             isProcessing = true;
@@ -262,18 +273,25 @@
 </script>
 
 <style>
-    .scanner-card { max-width: 700px; margin: 0 auto; padding: 40px; position: relative; overflow: hidden; }
+    .scanner-card { max-width: 900px; margin: 0 auto; padding: 40px; position: relative; overflow: hidden; }
     .scanner-card::before { content: ''; position: absolute; top: -50px; left: 50%; transform: translateX(-50%); width: 200px; height: 200px; background: var(--primary-color); opacity: 0.15; border-radius: 50%; filter: blur(80px); z-index: 0; pointer-events: none; }
     .scanner-header { text-align: center; margin-bottom: 30px; position: relative; z-index: 1; }
     .scanner-header h2 { font-size: 28px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 10px; }
     .scanner-header .subtitle { color: var(--text-light); font-size: 15px; }
-    .scanner-wrapper { position: relative; width: 100%; max-width: 450px; margin: 0 auto 30px auto; border-radius: 20px; overflow: hidden; background: #000; box-shadow: 0 20px 40px rgba(0,0,0,0.15), 0 0 0 4px rgba(255,255,255,0.4); aspect-ratio: 1/1; z-index: 1; }
+
+    .scanner-layout-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; margin-bottom: 10px; }
+    @media (max-width: 768px) { .scanner-layout-grid { grid-template-columns: 1fr; gap: 20px; } }
+
+    .scanner-wrapper { position: relative; width: 100%; max-width: 450px; margin: 0 auto; border-radius: 20px; overflow: hidden; background: #000; box-shadow: 0 20px 40px rgba(0,0,0,0.15), 0 0 0 4px rgba(255,255,255,0.4); aspect-ratio: 1/1; z-index: 1; }
     #reader { width: 100%; height: 100%; border: none !important; }
     #reader video { object-fit: cover !important; border-radius: 20px; }
-    .scanner-overlay { position: absolute; inset: 0; border-radius: 20px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 10; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+    .scanner-overlay { position: absolute; inset: 0; border-radius: 20px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 10; opacity: 0; pointer-events: none; transition: opacity 0.3s ease, transform 0.2s ease; }
     .scanner-overlay:not(.hidden) { opacity: 1; pointer-events: auto; }
-    .scanner-overlay.active { opacity: 1; pointer-events: auto; }
-    .overlay-content { text-align: center; color: #fff; padding: 20px; }
+    
+    #scanner-placeholder.active { opacity: 1; pointer-events: auto; cursor: pointer; }
+    #scanner-placeholder.active:hover { background: rgba(15, 23, 42, 0.95); transform: scale(1.02); }
+
+    .overlay-content { text-align: center; color: #fff; padding: 20px; pointer-events: none; }
     .overlay-content h3 { font-size: 20px; margin-bottom: 8px; font-weight: 600; }
     .overlay-content p { color: #cbd5e1; font-size: 14px; max-width: 280px; margin: 0 auto; }
     .loading-icon { font-size: 40px; color: var(--primary-color); margin-bottom: 15px; }
@@ -283,12 +301,14 @@
     .icon-circle.error { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 2px solid rgba(239, 68, 68, 0.4); }
     .success-overlay .highlight-text { color: #34d399; font-size: 16px; font-weight: 600; margin-top: 10px; }
     .success-overlay .fee-deducted { background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; font-size: 12px; margin-top: 15px; display: inline-block; }
-    .scanner-controls { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; position: relative; z-index: 1; }
-    .scanner-controls .btn { padding: 12px 20px; border-radius: 30px; font-weight: 500; }
+    
+    .scanner-side-panel { display: flex; flex-direction: column; justify-content: center; gap: 30px; position: relative; z-index: 1; }
+    .scanner-controls { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+    .scanner-controls .btn { padding: 12px 20px; border-radius: 30px; font-weight: 500; width: 100%; max-width: 300px; display: flex; justify-content: center; align-items: center; gap: 8px; }
     .stop-btn { background: #fee2e2; color: #ef4444; }
     .stop-btn:hover { background: #fecaca; }
     [data-theme="dark"] .stop-btn { background: rgba(239, 68, 68, 0.15); }
-    .fee-info { display: flex; flex-direction: column; align-items: center; gap: 8px; position: relative; z-index: 1; }
+    .fee-info { display: flex; flex-direction: column; align-items: center; gap: 8px; }
     .fee-badge { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.2)); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--success); font-size: 20px; font-weight: 700; padding: 8px 24px; border-radius: 12px; display: flex; align-items: center; }
     .fee-info span { font-size: 13px; color: var(--text-light); }
     @keyframes pulse-success { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
