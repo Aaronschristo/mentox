@@ -58,3 +58,9 @@ dist/
 # Testing
 .pytest_cache/
 htmlcov/
+
+# Tauri & Node
+node_modules/
+src-tauri/target/
+src-tauri/Cargo.lock
+

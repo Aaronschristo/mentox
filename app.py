@@ -3,7 +3,8 @@ import io
 import functools
 import qrcode
 from datetime import datetime, timedelta
-from flask import Flask, render_template, request, jsonify, send_file, make_response
+from flask import Flask, render_template, request, jsonify, send_file, make_response, send_from_directory
+from flask_cors import CORS
 from sqlalchemy import func
 from sqlalchemy.orm import joinedload
 from models import db, Customer, Transaction, Setting, get_ist_time
@@ -14,6 +15,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000  # 1 year cache for versioned static assets
 
 db.init_app(app)
+CORS(app)  # Allow cross-origin requests from Tauri app and website
 
 with app.app_context():
     db.create_all()
@@ -54,33 +56,39 @@ def _generate_qr_png(customer_id: str) -> bytes:
     img.save(buf, 'PNG')
     return buf.getvalue()
 
+# Serve frontend static files
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return send_from_directory('frontend', 'index.html')
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
+    return send_from_directory('frontend', 'dashboard.html')
 
 @app.route('/customers')
 def customers_page():
-    return render_template('customers.html')
+    return send_from_directory('frontend', 'customers.html')
 
 @app.route('/recharge')
 def recharge_page():
-    return render_template('recharge.html')
+    return send_from_directory('frontend', 'recharge.html')
 
 @app.route('/scan')
 def scan_page():
-    return render_template('scan.html')
+    return send_from_directory('frontend', 'scan.html')
 
 @app.route('/analytics')
 def analytics_page():
-    return render_template('analytics.html')
+    return send_from_directory('frontend', 'analytics.html')
 
 @app.route('/settings')
 def settings_page():
-    return render_template('settings.html')
+    return send_from_directory('frontend', 'settings.html')
+
+# Serve any other static file in frontend/ (css, js, etc.)
+@app.route('/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('frontend', filename)
 
 # API Endpoints
 
@@ -332,6 +340,12 @@ def checkin():
         'customer_name': customer.name,
         'remaining_balance': customer.balance
     }), 200
+
+@app.route('/api/settings_get', methods=['GET'])
+def get_settings():
+    """GET endpoint for the frontend to load current settings as JSON."""
+    settings = {s.key: s.value for s in Setting.query.all()}
+    return jsonify(settings)
 
 @app.route('/api/settings', methods=['POST'])
 def save_settings():

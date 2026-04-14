@@ -1,8 +1,9 @@
-# PlayArea Management App
+# Mentox - PlayArea Manager (Tauri Desktop App & Web App)
 
-🌍 **Live Demo:** [https://aaronschristo.pythonanywhere.com/](https://aaronschristo.pythonanywhere.com/)
+🌍 **Live Web Demo:** [https://aaronschristo.pythonanywhere.com/](https://aaronschristo.pythonanywhere.com/)
 
-A premium, fully responsive web application designed for PlayArea businesses to manage digital customer check-ins, top-ups, and point-of-sale functionality using QR code scanning capabilities. Built with Flask, SQLite, and vanilla Javascript.
+A premium, fully responsive cross-platform application designed for PlayArea businesses to manage digital customer check-ins, top-ups, and point-of-sale functionality using QR code scanning capabilities. 
+Built with **Tauri 2 (Rust Desktop Client)**, **Flask (Python Backend API)**, and **Vanilla Javascript/CSS**.
 
 ## ✨ Premium Features
 
@@ -19,12 +20,18 @@ A premium, fully responsive web application designed for PlayArea businesses to 
 - 📊 **Business Analytics Engine**: Track check-in transactions dynamically modeled via Chart.js over fluid Glassmorphism canvases. Features complex native sliding toggles scaling bounds automatically to 24-hour sets (Hourly) or 7-day bounds (Daily).
 - 📅 **Custom Date Controllers**: Swapped rudimentary default browser native Date inputs for custom-skinned Flatpickr popups mapping elegantly to CSS Variables across Dark/Light themes alongside custom padding pill aesthetics.
 
-## 🛠️ Tech Stack
+## 🛠️ Architecture & Tech Stack
 
-- **Backend**: Python 3.8+, Flask, Flask-SQLAlchemy (SQLite3), Waitress (Production WSGI Gateway)
-- **Frontend**: HTML5, Vanilla CSS3 (CSS Variables, Flex/Grid matrices, GPU Transforms), Vanilla JavaScript (Fragment Buffers)
+This project uses a unified architecture for both **Web** and **Desktop App**.
+- **`frontend/`**: The single source of truth for the UI (HTML, CSS, JS). Used by both the website and the Tauri desktop app.
+- **`src-tauri/`**: The Rust-based Tauri backend that bundles the `frontend/` into a native executable for Windows/macOS/Linux.
+- **`app.py`**: The Flask remote API server. It also conditionally serves the `frontend/` directory for pure-web access.
+
+**Technologies Used**:
+- **Desktop Subsystem**: Tauri 2 (Rust)
+- **Backend**: Python 3.8+, Flask, Flask-SQLAlchemy (SQLite3), Flask-Cors
+- **Frontend**: Single-Page App (SPA) architecture via Vanilla HTML5/CSS3/JS, `config.js` for dynamic remote endpoint routing.
 - **Libraries**:
-  - `qrcode[pil]` (Server-side automatic bitmap QR generation)
   - `html5-qrcode` (Browser-Side Camera feed stream and matrix decoding)
   - `Chart.js` (Asynchronous HTML5 Canvas dataset rendering loops)
   - `Flatpickr` (Lightweight responsive Calendar drop-downs)
@@ -33,13 +40,14 @@ A premium, fully responsive web application designed for PlayArea businesses to 
 
 ### Prerequisites
 - [Python 3.8+](https://www.python.org/downloads/)
-- Built-in `venv` module
+- [Node.js (for Tauri CLI)](https://nodejs.org/)
+- [Rust & MSVC C++ Build Tools](https://tauri.app/v1/guides/getting-started/prerequisites)
 
-### Installation
+### 1. Backend API (Flask) Setup
 
-1. **Clone the repository** (if applicable) and open a terminal in the project directory:
+1. **Clone the repository** and open a terminal in the project directory:
    ```bash
-   cd playarea-app
+   cd mentox
    ```
 
 2. **Set up the virtual environment:**
@@ -48,34 +56,39 @@ A premium, fully responsive web application designed for PlayArea businesses to 
    ```
 
 3. **Activate the virtual environment:**
-   - **Windows:**
-     ```bash
-     .\venv\Scripts\activate
-     ```
-   - **macOS / Linux:**
-     ```bash
-     source venv/bin/activate
-     ```
+   - **Windows:** `.\venv\Scripts\activate`
+   - **macOS / Linux:** `source venv/bin/activate`
 
 4. **Install Python dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
 
-### Running the Application
-
-1. Ensure your virtual environment is activated.
-2. Start the local Flask development server:
+5. **Start the local backend server:**
    ```bash
    python app.py
    ```
-   *Note: For deployment, uncomment the active `waitress` block bridging the WSGI interface inside `app.py`*
+   *The server runs on `http://127.0.0.1:5000`. By default, the frontend is configured to target a remote production URL.*
 
-3. Open your web browser and navigate to:
+### 2. Frontend Configuration & Running the Web App
+
+The target API endpoint is managed globally inside `frontend/js/config.js`. You can toggle between local development and your live production backend here.
+
+To view the raw web app without Tauri, simply launch the backend server above and load `http://127.0.0.1:5000` via your web browser. 
+
+### 3. Tauri Desktop App Setup
+
+1. Make sure Node.js and Rust are installed.
+2. In a separate terminal, start the Tauri development window:
+   ```bash
+   npx @tauri-apps/cli@2 dev
    ```
-   http://localhost:5000
+   *(Tauri will automatically serve and bundle the `frontend/` directory).*
+
+3. To build a distributable `.exe` or `.msi` Windows installer:
+   ```bash
+   npx @tauri-apps/cli@2 build
    ```
-   *(The SQLite database `playarea.db` will be initialized automatically on the first request.)*
 
 ## 📱 Mobile Camera Testing (Local LAN)
 
